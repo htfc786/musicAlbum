@@ -7,6 +7,7 @@
     $dbPassword = $confIniArray["dbPassword"]; // 请在此修改数据库密码
     $dbDatabase = $confIniArray["dbDatabase"];
     $dbPort = $confIniArray["dbPort"];
+    $dbEncoding = $confIniArray["dbEncoding"];
 
     $msgHtml = ''; //提示html
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -29,7 +30,7 @@
                     if($psw == $psw_confirm) {  
                         $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);    //连接数据库  
                         //mysqli_select_db("my_test");  //选择数据库  
-                        mysqli_query($db,"set names 'utf-8'"); //设定字符集  
+                        mysqli_query($db,"set names '$dbEncoding'"); //设定字符集  
                         $sql = "select username from user where username = '$_POST[username]'"; //SQL语句  
                         $result = mysqli_query($db,$sql);    //执行SQL语句  
                         $num = mysqli_num_rows($result); //统计执行结果影响的行数  
@@ -55,7 +56,7 @@
             }  
         }
     }  
-?>
+?><!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,6 +101,55 @@
                 现在，需要确保您是此服务器的所有者。已在网站根目录中创建了"verification.txt"。请在验证码栏输入文件内的信息。
                 <br/>
                 <input type="Submit" value="注册"/> 
+                <?php echo $msgHtml; ?>
+                <br/>
+                <span>已有账号？<a href="login.php">登录</a></span>
+            </form>
+        </div>
+        <hr>
+    </div>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员账号注册_音乐相册</title>
+    <style>
+        body {
+            background: #f3f3f3;
+        }
+        #big-border {
+            background: #fff;
+            margin: 0 auto;
+            padding: 10px;
+        }
+		#page-title {
+			text-align: center;
+		}
+        #little-page-title{
+            text-align: right;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="big-border">
+        <h1 id="page-title">管理员注册</h1>
+        <h6 id="little-page-title">by--htfc786</h6>
+        <div id="msg"></div>
+        <hr>
+        <div id="page-title">
+            <form action="register.php" method="post"> 
+                现在，需要确保您是此服务器的所有者。点击按钮在网站根目录中创建"verification.txt"。请在验证码栏输入文件内的信息。
+                <br/>
+                <input type="hidden" name="" value="Norway">
+                验证码：<input type="text" name="verification"/>
+                <br/>
+                <input type="Submit" value="验证"/> 
                 <?php echo $msgHtml; ?>
                 <br/>
                 <span>已有账号？<a href="login.php">登录</a></span>
