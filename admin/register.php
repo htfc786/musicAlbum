@@ -8,55 +8,61 @@
     $dbDatabase = $confIniArray["dbDatabase"];
     $dbPort = $confIniArray["dbPort"];
     $dbEncoding = $confIniArray["dbEncoding"];
-
+    //各种变量定义
     $msgHtml = ''; //提示html
-    if($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $verification_code = strval(mt_rand());
-        $verification_file = fopen("../verification.txt", "w");
-        fwrite($verification_file, $verification_code);
-    }
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if(isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["verification"])) {  
-            $user = $_POST["username"];  
-            $psw = $_POST["password"];  
-            $psw_confirm = $_POST["confirm"];  
-            $verification_web = $_POST["verification"];
-            if($user == "" || $psw == "" || $psw_confirm == "" || $verification_web == "") {  
-                $msgHtml = '<span style="color:red;">请确认信息完整性！</span>';  
-            } else {  
-                $verification_file = fopen("../verification.txt", "r");
-                $verification_code = fgets($verification_file);
-                if($verification_web == $verification_code){
-                    if($psw == $psw_confirm) {  
-                        $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);    //连接数据库  
-                        //mysqli_select_db("my_test");  //选择数据库  
-                        mysqli_query($db,"set names '$dbEncoding'"); //设定字符集  
-                        $sql = "select username from user where username = '$_POST[username]'"; //SQL语句  
-                        $result = mysqli_query($db,$sql);    //执行SQL语句  
-                        $num = mysqli_num_rows($result); //统计执行结果影响的行数  
-                        if($num) {  //如果已经存在该用户  
-                            $msgHtml = '<span style="color:red;">已经存在该用户！</span>';  
-                        }  else {   //不存在当前注册用户名称  
-                            $sql_insert = "insert into user (username,password,isAdmin) values('$_POST[username]','$_POST[password]',1)";  
-                            $res_insert = mysqli_query($db,$sql_insert);  
-                            //$num_insert = mysql_num_rows($res_insert);  
-                            if($res_insert)  {
-                                unlink('../verification.txt');
-                                header('refresh:1; url=login.php?from=register'); 
-                            } else {  
-                                $msgHtml = '<span style="color:red;">系统繁忙，请稍候！</span>';  
-                            }  
-                        }  
-                    } else {  
-                        $msgHtml = '<span style="color:red;">密码不一致！</span>';  
-                    }  
-                } else {
-                    $msgHtml = '<span style="color:red;">验证码错误！</span>';
-                }
-            }  
+?>
+<?php
+    if($_SERVER['REQUEST _METHOD'] === 'POST') {
+        if(isset($_POST["type"]) && $_POST["type"]=="register"){
+            
         }
+        //判断信息完整性
+        if((!(isset($_POST["username"])&&
+            isset($_POST["password"])&&
+            isset($_POST["confirm"])))&&
+            ($_POST["username"] == "" &&
+            $_POST["password"] == "" &&
+            $_POST["confirm"] == "")) {  
+                $mHtml = '<span style="color:red;">请确认信息完整性！</span>';  
+                goto end; //跳转到结束
+        } 
+        
+        //判断两个密码是否一致
+        if($_POST["password"] == $_POST["confirm"]) {
+            $msgHtml = '<span style="color:red;">密码不一致！</span>';  
+            goto end; //跳转到结束
+        }
+
+        //账号密码赋值变量
+        $user = $_POST["username"];
+        $psw = $_POST["password"]; 
+        //连接数据库  
+        $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);
+        mysqli_query($db,"set names 'utf-8'"); //设定字符集  
+        //查询user表里是否已经有了此用户
+        $result = mysqli_query($db,"select username from user where username = '$_POST[username]'");
+
+        //如果已经存在该用户  
+        if(mysqli_num_rows($result)) {  
+            $msgHtml = '<span style="color:red;">已经存在该用户！</span>';  
+            goto end; //跳转到结束
+        }
+        
+        //不存在当前注册用户名称 开始注册
+        //执行插入的SQL
+        $res_insert = mysqli_query($db,"insert into user (username,password) values('$_POST[username]','$_POST[password]')");  
+        //$num_insert = mysql_num_rows($res_insert); 
+        
+        //如果插入失败执行 ！！！注意：这里有可能是
+        if(!$res_insert) {
+            $msgHtml = '<span style="color:red;">系统繁忙，请稍候！</span>';
+        }
+        //成功跳转到登录页
+        header('refresh:1; url=../login.php?from=register'); 
+
+        end: //跳转到这里
     }  
-?><!--
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,7 +116,7 @@
     </div>
 </body>
 </html>
--->
+-------------------------
 <!DOCTYPE html>
 <html lang="en">
 <head>

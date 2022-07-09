@@ -13,15 +13,21 @@
     session_start();
     $msgHtml = ''; //提示html
     $scriptHtml = '';//js (禁用输入框)
-    //从注册而来给与提示信息
+    //从注册而来给与提示信息0
     if (isset($_GET["from"])&&$_GET["from"]=="register"){
         $msgHtml = '<span style="color:green;">注册成功，请登录！</span>';
     }
     //已经登录无需重复登录
     if (isset($_SESSION['username']) && $_SESSION['username']){
-        header('refresh:1; url=../');
-        $msgHtml = '<span style="color:red;">当前已登录，无需再次登录</span>';  
-        $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
+        if (isset($_SESSION['isadmin']) && $_SESSION['isadmin']){
+            header('refresh:1; url=./');
+            $msgHtml = '<span style="color:red;">当前已登录，无需再次登录</span>';  
+            $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
+        } else {
+            $msgHtml = '<span style="color:red;">当前已登录了一个非管理员账号，请先<a href="..\logout.php?from=admin-login">退出登录</a></span>';  
+            $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
+        }
+       
     }
     //请求方式为post说明要登录
     if($_SERVER['REQUEST_METHOD'] === 'POST') {  
@@ -66,7 +72,7 @@
         //setcookie('username', $username, time()+7*24*60*60);
         //setcookie('code', md5($username.md5($password)), time()+7*24*60*60);
         //提示信息
-        header('refresh:1; url=../');
+        header('refresh:1; url=./');
         $msgHtml = '<span style="color:green;">登录成功！</span>';  
         $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
         //跳转到这里

@@ -19,14 +19,14 @@
     }
     //已经登录无需重复登录
     if (isset($_SESSION['username']) && $_SESSION['username']){  
-        header('refresh:1; url=/');
+        header('refresh:1; url=./');
         $msgHtml = '<span style="color:red;">当前已登录，无需再次登录</span>';  
         $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
     }
     //请求方式为post说明要登录
     if($_SERVER['REQUEST_METHOD'] === 'POST') {  
         //查看用户名密码密码是否存在
-        if (isset($_POST["username"])&&isset($_POST["password"])){  
+        if (!(isset($_POST["username"]) && isset($_POST["password"]))){  
             $msgHtml = '<span style="color:red;">提交信息有误！</span>'; 
             goto end; //跳转到结束
         }
@@ -62,7 +62,7 @@
         //setcookie('username', $username, time()+7*24*60*60);
         //setcookie('code', md5($username.md5($password)), time()+7*24*60*60);
         //提示信息
-        header('refresh:1; url=../');
+        header('refresh:1; url=./');
         $msgHtml = '<span style="color:green;">登录成功！</span>';  
         $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
         //跳转到这里
