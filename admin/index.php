@@ -1,9 +1,11 @@
 <?php session_start(); // 开启Session ?>
 <?php
+$confIniArray = parse_ini_file("../conf.ini", true);
+$PrePath = $confIniArray["PrePath"];
 if (!(isset($_SESSION['islogin']) && isset($_SESSION['isadmin']) && $_SESSION['isadmin'])) {
     // 没有登录
-    header('refresh:0; url=./login.php');
-    echo '提示：请先<a href="./login.php"></a>登录！！！';
+    header('refresh:0; url='.$PrePath.'admin/login.php');
+    echo '提示：请先<a href="'.$PrePath.'admin/login.php"></a>登录！！！';
     return;
 }
 // 已经登录

@@ -1,8 +1,10 @@
 <?php session_start(); // 开启Session ?>
 <?php
+$confIniArray = parse_ini_file("./conf.ini", true);
+$PrePath = $confIniArray["PrePath"];
 if (!isset($_SESSION['islogin'])) {
     // 没有登录
-    header('refresh:0; url=./login.php');
+    header('refresh:0; url='.$PrePath.'login.php');
     $title = '请先登录';
     echo "<h4 id='page-title'>您还没有登录,请登录,3秒后自带跳转</h4>";
 }else if (isset($_SESSION['islogin'])) {
@@ -10,7 +12,6 @@ if (!isset($_SESSION['islogin'])) {
     $username = $_SESSION['username'];//用户名
     $title = $username.' 的个人空间';
     //配置数据库
-    $confIniArray = parse_ini_file("./conf.ini", true);
     //print_r($confIniArray);
     $dbHost = $confIniArray["dbHost"];
     $dbUser = $confIniArray["dbUser"];

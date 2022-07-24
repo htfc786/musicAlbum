@@ -1,6 +1,8 @@
 <?php  
-    //配置数据库
     $confIniArray = parse_ini_file("../conf.ini", true);
+    $PrePath = $confIniArray["PrePath"];
+    //配置数据库
+    //$confIniArray = parse_ini_file("../conf.ini", true);
     //print_r($confIniArray);
     $dbHost = $confIniArray["dbHost"];
     $dbUser = $confIniArray["dbUser"];
@@ -20,11 +22,11 @@
     //已经登录无需重复登录
     if (isset($_SESSION['username']) && $_SESSION['username']){
         if (isset($_SESSION['isadmin']) && $_SESSION['isadmin']){
-            header('refresh:1; url=./');
+            header('refresh:1; url='.$PrePath.'admin/');
             $msgHtml = '<span style="color:red;">当前已登录，无需再次登录</span>';  
             $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
         } else {
-            $msgHtml = '<span style="color:red;">当前已登录了一个非管理员账号，请先<a href="..\logout.php?from=admin-login">退出登录</a></span>';  
+            $msgHtml = '<span style="color:red;">当前已登录了一个非管理员账号，请先<a href="'.$PrePath.'logout.php?from=admin-login">退出登录</a></span>';  
             $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
         }
        
@@ -72,7 +74,7 @@
         //setcookie('username', $username, time()+7*24*60*60);
         //setcookie('code', md5($username.md5($password)), time()+7*24*60*60);
         //提示信息
-        header('refresh:1; url=./');
+        header('refresh:1; url='.$PrePath.'admin/');
         $msgHtml = '<span style="color:green;">登录成功！</span>';  
         $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
         //跳转到这里

@@ -1,6 +1,7 @@
 <?php  
-    //配置数据库
     $confIniArray = parse_ini_file("./conf.ini", true);
+    $PrePath = $confIniArray["PrePath"];
+    //配置数据库
     //print_r($confIniArray);
     $dbHost = $confIniArray["dbHost"];
     $dbUser = $confIniArray["dbUser"];
@@ -53,7 +54,7 @@
             $msgHtml = '<span style="color:red;">系统繁忙，请稍候！</span>';
         }
         //成功跳转到登录页
-        header('refresh:1; url=../login.php?from=register'); 
+        header('refresh:1; url='.$PrePath.'login.php?from=register'); 
         //跳转到这里
         end:
     } 

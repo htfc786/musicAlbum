@@ -1,5 +1,7 @@
 <?php
 header('Content-type:text/html; charset=utf-8');
+$confIniArray = parse_ini_file("./conf.ini", true);
+$PrePath = $confIniArray["PrePath"];
 
 // 启用session
 session_start();
@@ -13,11 +15,11 @@ if (isset($_SESSION['username']) and $_SESSION['username']){
 
     if (isset($_GET['from']) && $_GET['from']){
         if($_GET['from']=="admin-login"){
-            header('refresh:3; url=.\admin\login.php');
+            header('refresh:3; url='.$PrePath.'admin\login.php');
         }
     } else {
         // 跳转
-        header('refresh:3; url=login.php');
+        header('refresh:3; url='.$PrePath.'login.php');
     }
     // 提示信息
     $msg = "提示：账号 ".$username.' 已经退出登录<br>';

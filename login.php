@@ -1,6 +1,7 @@
 <?php  
-    //配置数据库
     $confIniArray = parse_ini_file("./conf.ini", true);
+    $PrePath = $confIniArray["PrePath"];
+    //配置数据库
     //print_r($confIniArray);
     $dbHost = $confIniArray["dbHost"];
     $dbUser = $confIniArray["dbUser"];
@@ -62,7 +63,7 @@
         //setcookie('username', $username, time()+7*24*60*60);
         //setcookie('code', md5($username.md5($password)), time()+7*24*60*60);
         //提示信息
-        header('refresh:1; url=./');
+        header('refresh:1; url='.$PrePath.'');
         $msgHtml = '<span style="color:green;">登录成功！</span>';  
         $scriptHtml = '<script>document.getElementById("username").disabled=true;document.getElementById("password").disabled=true;document.getElementById("submitButton").disabled=true</script>';
         //跳转到这里

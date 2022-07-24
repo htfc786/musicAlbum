@@ -1,6 +1,8 @@
 <?php  
-    //配置数据库
+    //未完成
     $confIniArray = parse_ini_file("../conf.ini", true);
+    $PrePath = $confIniArray["PrePath"];
+    //配置数据库
     //print_r($confIniArray);
     $dbHost = $confIniArray["dbHost"];
     $dbUser = $confIniArray["dbUser"];
