@@ -13,9 +13,9 @@
     //请求方式为post说明要注册
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
         //判断信息完整性
-        if((isset($_POST["username"])&&
+        if((!(isset($_POST["username"])&&
             isset($_POST["password"])&&
-            isset($_POST["confirm"]))||
+            isset($_POST["confirm"])))||
             ($_POST["username"] == "" || 
             $_POST["password"] == "" || 
             $_POST["confirm"] == "")) {  
@@ -24,7 +24,7 @@
         }
 
         //判断两个密码是否一致
-        if($_POST["password"] == $_POST["confirm"]) {
+        if($_POST["password"] != $_POST["confirm"]) {
             $msgHtml = '<span style="color:red;">密码不一致！</span>';  
             goto end; //跳转到结束
         }

@@ -45,8 +45,8 @@ header nav ul li {
 /*********** 声明主体区样式 ***********/
 /*侧边导航栏*/
 main {
-    width: 1000px;  /*内容区宽度*/
-    height: 800px;
+    min-width: 500px;  /*内容区宽度*/
+    height: 700px;
     margin: 30px auto 0;
     padding-left: 200px;
     overflow: hidden;
@@ -72,7 +72,7 @@ main aside {
     width: 175px;
     margin-left: -100%;
     position: relative;
-    left: -197px;
+    left: -180px;
 }
 main aside nav li {
     line-height: 2rem;
@@ -89,7 +89,7 @@ main aside nav li a.active,main aside nav li a:hover {
 }
 main article iframe {
     min-width: 100%;
-    min-height: 700px;
+    min-height: 600px;
     margin: auto;
     border: none;
 }
