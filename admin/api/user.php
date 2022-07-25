@@ -77,7 +77,7 @@ switch ($_GET["do"])
 
 //连接数据库
 //读取配置
-$confIniArray = parse_ini_file("../../../conf.ini", true);
+$confIniArray = parse_ini_file("../../conf.ini", true);
 //数据库配置
 $dbHost = $confIniArray["dbHost"];
 $dbUser = $confIniArray["dbUser"];

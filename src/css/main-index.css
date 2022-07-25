@@ -1,0 +1,62 @@
+body {
+    background: #f3f3f3;
+}
+#big-border {
+    background: #fff;
+    margin: 0 auto;
+    padding: 10px;
+}
+#page-title {
+    text-align: center;
+}
+#little-page-title{
+    text-align: right;
+}
+.album{
+    margin: 5;
+    position: relative;
+}
+.album fieldset{
+    width:300px;
+    height: 120px;
+}
+.album-name{
+    font-size:20px;
+}
+.album-time{
+    font-size:10px;
+    color:#999;
+}
+.album-photonum{
+    font-size:10px;
+    color:#999;
+}
+.album-getphoto{
+    position: absolute;
+    left: 10px;
+    width: 140px;
+    height: 40px;
+    line-height: 40px;
+    top: 90px;
+    border: 1px solid #444;
+    text-align: center;
+    color: #444;
+    border-radius: 6px 6px 6px 6px;
+    font-size: 18px;
+}
+.album-edit{
+    background-color: #444;
+    border-radius: 6px;
+    width: 140px;
+    height: 42px;
+    position: absolute;
+    color: #fff;
+    text-align: center;
+    line-height: 42px;
+    font-size: 20px;
+    top: 90px;
+    left: 175px;
+}
+.new-album{
+    width:300px;
+}

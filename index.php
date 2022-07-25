@@ -27,70 +27,7 @@ if (!isset($_SESSION['islogin'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $title; ?>_音乐相册</title>
-    <style>
-        body {
-            background: #f3f3f3;
-        }
-        #big-border {
-            background: #fff;
-            margin: 0 auto;
-            padding: 10px;
-        }
-		#page-title {
-			text-align: center;
-		}
-        #little-page-title{
-            text-align: right;
-        }
-        .album{
-            margin: 5;
-            position: relative;
-        }
-        .album fieldset{
-            width:300px;
-            height: 120px;
-        }
-        .album-name{
-            font-size:20px;
-        }
-        .album-time{
-            font-size:10px;
-            color:#999;
-        }
-        .album-photonum{
-            font-size:10px;
-            color:#999;
-        }
-        .album-getphoto{
-            position: absolute;
-            left: 10px;
-            width: 140px;
-            height: 40px;
-            line-height: 40px;
-            top: 90px;
-            border: 1px solid #444;
-            text-align: center;
-            color: #444;
-            border-radius: 6px 6px 6px 6px;
-            font-size: 18px;
-        }
-        .album-edit{
-            background-color: #444;
-            border-radius: 6px;
-            width: 140px;
-            height: 42px;
-            position: absolute;
-            color: #fff;
-            text-align: center;
-            line-height: 42px;
-            font-size: 20px;
-            top: 90px;
-            left: 175px;
-        }
-        .new-album{
-            width:300px;
-        }
-    </style>
+    <link rel="stylesheet" href="./src/css/main-index.css">
 </head>
 <body>
     <div id="big-border">
@@ -150,56 +87,53 @@ if (!isset($_SESSION['islogin'])) {
         </div>
         <hr>
     </div>
-    <script>
-        function newAlbum() {
-            // 用FormData传输
-            let fd = new FormData();
-
-            let xhr = new XMLHttpRequest();
-            xhr.open("get", "make/new.php", true);
-
-            // 成功
-            xhr.onload = function (e) {
-                if (e.currentTarget.responseText == "请先登录"){
-                    alert("请先登录");
-                    location.href = "/user/login.php";
-                }
-                if (e.currentTarget.responseText == "新建成功"){
-                    alert("新建成功");
-                    location.reload();
-                }
-                if (e.currentTarget.responseText == "系统繁忙，请稍后"){
-                    alert("系统繁忙，请稍后");
-                }
-            }
-            // 失败
-            xhr.onerror = function (e) {
-                alert("失败：" + e);
-            }
-            xhr.send(fd);
-        }
-        function delAlbum(aid) {
-            isDel = confirm("删除后不可恢复，确定要删除吗？")
-            if (isDel){
-                // 用FormData传输
-                let fd = new FormData();
-                fd.append("aid", aid);
-
-                let xhr = new XMLHttpRequest();
-                xhr.open("post", "api/delalbum.php", true);
-
-                // 成功
-                xhr.onload = function (e) {
-                    alert(e.currentTarget.responseText);
-                    location.reload();
-                }
-                // 失败
-                xhr.onerror = function (e) {
-                    alert("失败：" + e);
-                }
-                xhr.send(fd);
-            }
-        }
-    </script>
 </body>
+<script>
+function newAlbum() {
+    // 用FormData传输
+    let fd = new FormData();
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("get", "api/addnewalbum.php", true);
+
+    // 成功
+    xhr.onload = function (e) {
+        alert(e.currentTarget.responseText);
+        if (e.currentTarget.responseText == "请先登录"){
+            location.href = "./login.php";
+        }
+        if (e.currentTarget.responseText == "新建成功"){
+            location.reload();
+        }
+    }
+    // 失败
+    xhr.onerror = function (e) {
+        alert("请求失败：" + e);
+    }
+    xhr.send(fd);
+}
+        
+function delAlbum(aid) {
+    isDel = confirm("删除后不可恢复，确定要删除吗？")
+    if (isDel){
+    // 用FormData传输
+        let fd = new FormData();
+        fd.append("aid", aid);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("post", "api/delalbum.php", true);
+
+        // 成功
+        xhr.onload = function (e) {
+            alert(e.currentTarget.responseText);
+            location.reload();
+        }
+        // 失败
+        xhr.onerror = function (e) {
+            alert("失败：" + e);
+        }
+        xhr.send(fd);
+    }
+}
+</script>
 </html>
