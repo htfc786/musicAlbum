@@ -90,27 +90,31 @@ if (!isset($_SESSION['islogin'])) {
 </body>
 <script>
 function newAlbum() {
-    // 用FormData传输
-    let fd = new FormData();
+    isDel = confirm("确定要新建吗？")
+    if (isDel){
+        // 用FormData传输
+        let fd = new FormData();
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("get", "api/addnewalbum.php", true);
+        let xhr = new XMLHttpRequest();
+        xhr.open("get", "api/addnewalbum.php", true);
 
-    // 成功
-    xhr.onload = function (e) {
-        alert(e.currentTarget.responseText);
-        if (e.currentTarget.responseText == "请先登录"){
-            location.href = "./login.php";
+        // 成功
+        xhr.onload = function (e) {
+            alert(e.currentTarget.responseText);
+            if (e.currentTarget.responseText == "请先登录"){
+                location.href = "./login.php";
+            }
+            if (e.currentTarget.responseText == "新建成功"){
+                location.reload();
+            }
         }
-        if (e.currentTarget.responseText == "新建成功"){
-            location.reload();
+        // 失败
+        xhr.onerror = function (e) {
+            alert("请求失败：" + e);
         }
+        xhr.send(fd);
     }
-    // 失败
-    xhr.onerror = function (e) {
-        alert("请求失败：" + e);
-    }
-    xhr.send(fd);
+    
 }
         
 function delAlbum(aid) {

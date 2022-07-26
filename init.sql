@@ -36,9 +36,19 @@ CREATE TABLE photos (
   PRIMARY KEY (id)
 )CHARSET=utf8mb4;
 
-CREATE TABLE templats (
+CREATE TABLE templatsClassification (
+  id int unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  classificationName int unsigned NOT NULL COMMENT '模板分类名称',
+  PRIMARY KEY (id)
+)CHARSET=utf8mb4;
+
+CREATE TABLE templates (
   id int unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
   templatName char(32) NOT NULL COMMENT '模板名称',
-  templatIMG char(255) NOT NULL COMMENT '模板图片',
+  templatIMG TEXT NOT NULL COMMENT '模板封面url',
+  templatFileMode char(10) NOT NULL COMMENT '模板静态文件存储方式',
+  templatFileUrl TEXT COMMENT '模板静态文件前置url',
+  templatUpdateUserId int unsigned COMMENT '上传用户id',
+  templatClassificationId int unsigned COMMENT '模板分类id',
   PRIMARY KEY (id)
 )CHARSET=utf8mb4;

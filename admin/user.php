@@ -75,6 +75,16 @@ $userData = mysqli_query($db,"select * from user limit $startRow,$adminUserPageN
             </div>
             <!--面板的主体-->
             <!--在面板中嵌入一个表格-->
+            <?php
+            if (mysqli_num_rows($templatesData)==0){   //没有数据
+                echo <<<END
+                <div class="panel-heading">
+                    <h3 class="panel-title">暂无数据</h3>
+                </div>
+                END;
+                goto end;
+            }
+            echo <<<END
             <table class="table">
                 <thead>
                     <tr class="bg-success">
@@ -86,32 +96,39 @@ $userData = mysqli_query($db,"select * from user limit $startRow,$adminUserPageN
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    $i = 0;
-                    while ($userDataRow=mysqli_fetch_assoc($userData)){
-                        $i++;
-                        $uid = $userDataRow["id"];
-                        $username = $userDataRow["username"];
-                        $jurisdiction = "用户";
-                        if ($userDataRow["isAdmin"]){
-                            $jurisdiction = "管理员";
-                        }
-                        $UserRowNum = $startRow+$i;
-                        echo <<<END
-                        <tr>
-                            <td>$UserRowNum</td>
-                            <td>$uid</td>
-                            <td>$username</td>
-                            <td>$jurisdiction</td>
-                            <td><a href="">编辑</a> |
-                                <a href="javascript:void(0);" onclick="delUser($uid)">删除</a>
-                            </td>
-                        </tr>
-                        END;
-                    }
-                    ?>
+            END;
+
+            $i = 0;
+            while ($userDataRow=mysqli_fetch_assoc($userData)){
+                $i++;
+                $uid = $userDataRow["id"];
+                $username = $userDataRow["username"];
+                $jurisdiction = "用户";
+                if ($userDataRow["isAdmin"]){
+                    $jurisdiction = "管理员";
+                }
+                $UserRowNum = $startRow+$i;
+                echo <<<END
+                <tr>
+                    <td>$UserRowNum</td>
+                    <td>$uid</td>
+                    <td>$username</td>
+                    <td>$jurisdiction</td>
+                    <td>
+                        <a href="">编辑</a> |
+                        <a href="javascript:void(0);" onclick="delUser($uid)">删除</a>
+                    </td>
+                </tr>
+                END;
+            }
+
+            echo <<<END
                 </tbody>
             </table>
+            END;
+
+            end: //跳转到这里
+            ?>
         </div>
         <div class="row">
             <ul class="be-pager">
