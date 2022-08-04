@@ -58,7 +58,7 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>模板管理</title>
-    <link rel="stylesheet" href="../src/css/admin-user.css">
+    <link rel="stylesheet" href="../src/css/admin-template.css">
 </head>
 <body>
     <div class="container">
@@ -69,7 +69,7 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                 <h3 class="panel-title">模板管理</h3>
                 <div style="position: absolute;display: block;top: 0;right: 0;margin: 10px;">
                     <a href="">重新加载</a>
-                    <a class="addUserText" href="javascript:void(0);" style="padding: 8px;">添加模板</a>
+                    <a class="addTemplateText" href="javascript:void(0);" style="padding: 8px;">添加模板</a>
                 </div>
             </div>
             <!--面板的主体-->
@@ -88,7 +88,14 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                 <thead>
                     <tr class="bg-success">
                         <td style="width: 10px;">#</td>
-                        
+                        <td>模板id</td>
+                        <td>模板名称</td>
+                        <td>模板封面</td>
+                        <td>html</td>
+                        <td>静态文件存储方式</td>
+                        <td>上传用户</td>
+                        <td>分类</td>
+                        <td>操作</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,11 +104,48 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
             $i = 0;
             while ($userDataRow=mysqli_fetch_assoc($templatesData)){
                 $i++;
-                        
+
                 $templatesRowNum = $startRow+$i;
+                //id
+                $templatesId = $userDataRow["id"];
+                //模板名称
+                $templatName = $userDataRow["templatName"];
+                //模板封面url
+                $templatIMGUrl = $userDataRow["templatIMG"];
+                //html
+                $templatHtmlPath = $userDataRow["templatHtmlPath"];
+                //静态文件存储方式和url
+                if ($userDataRow["templatFileMode"]=="updata"){
+                    $templatFileUrl = $userDataRow["templatFileUrl"];
+                    $templatFileModeHtml = "存储在本站<br/>(<a href=''>点击下载</a>)";
+                } else if ($userDataRow["templatFileMode"]=="url"){
+                    $templatFileUrl = $userDataRow["templatFileUrl"];
+                    $templatFileModeHtml = "存储在别的网站<br/>($templatFileUrl)";
+                } else if ($userDataRow["templatFileMode"]=="none"){
+                    $templatFileModeHtml = "无";
+                }
+                //上传用户
+                $templatUpdateUserId = $userDataRow["templatUpdateUserId"];
+                //分类
+                $templatGroupId = $userDataRow["templatGroupId"];
+                if($templatGroupId==0){
+                    $templatGroup="无分组";
+                }else{
+                    $templatGroupDB=mysqli_query($db,"select groupName from templatesgroup where id = $templatGroupId"); 
+                    $templatGroupDB = mysqli_fetch_array($templatGroupDB);
+                    $templatGroup=$templatGroupDB["groupName"];
+                }
+                
                 echo <<<END
                 <tr>
                     <td>$templatesRowNum</td>
+                    <td>$templatesId</td>
+                    <td>$templatName</td>
+                    <td><img class="templateIMG" src="$templatIMGUrl"></img></td>
+                    <td>$templatHtmlPath</td>
+                    <td>$templatFileModeHtml</td>
+                    <td>UID$templatUpdateUserId</td>
+                    <td>$templatGroup</td>
                     <td>
                         <a href="">编辑</a> |
                         <a href="javascript:void(0);" onclick="del()">删除</a>
@@ -144,30 +188,40 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                 ?>
             </ul>
         </div>
-        <!-- <div id="screenBlack" style="display:none;"></div>
-        <!-- https://blog.csdn.net/pengxiang1998/article/details/105705755 
-        <div class="addUser">
-            <div class="title">
-                <div class="text">添加用户</div>
-                <div class="close">X</div>
-            </div>
-            <hr style="border: 1px solid #444;">
-            <br/>
-            <div class="addUserFrom">
-                用户名：<input type="text" name="username"/><br/>
-                密码：<input type="password" name="password"/><br/>
-                确认密码：<input type="password" name="confirm"/><br/>
-                <div style="text-align: left;">
-                    用户权限：
-                    <input type="radio" name="isAdmin" value="no"/>用户
-                    <input type="radio" name="isAdmin" value="yes"/>管理员
-                </div><br/>
-            </div>
-            <br/>
-            <input type="submit" onclick="addTemplate();"/>
-            <div id="addUserText"></div>
+    </div>
+
+    <div id="screenBlack" style="display:none;"></div>
+    <!-- https://blog.csdn.net/pengxiang1998/article/details/105705755 -->
+    <div class="addTemplate">
+        <div class="title">
+            <div class="text">添加模板</div>
+            <div class="close">X</div>
         </div>
-        -->
+        <hr style="border: 1px solid #444;">
+        <br/>
+        <div class="addTemplateFrom" style="width: 380px;">
+            <div id="addTemplateFromTemplateName">模板名称：<input type="text" name="templateName"/></div>
+            <div id="addTemplateFromTemplateIMG">模板封面：<input type="file" name="templateIMG"/></div>
+            <div id="addTemplateFromTemplateHtml">模板html文件：<input type="file" name="templateHtml"/></div>
+            <div id="addTemplateFromTemplateFileMode">模板静态文件存储方式：
+                <select name="templateFileMode">
+                    <option value="updata">存储在本网站上 (上传zip文件)</option>
+                    <option value="url">存储在别的网站上 (填写url)</option>
+                    <option value="none">无静态文件</option>
+                </select></div>
+            <div id="addTemplateFromTemplateFile">模板静态文件上传：<input type="file" name="templateFile"/></div>
+            <div id="addTemplateFromTemplateUrl">模板静态文件url：<input type="text" name="templateUrl"/></div>
+            <div id="addTemplateFromTemplateGroup">模板分类：
+                <select name="templateGroup">
+                    <option value="0">无分类</option>
+                    <option value="new">新建分类</option>
+                    
+                </select></div>
+            <div id="addTemplateFromTemplateGroupName">新分类名称：<input type="text" name="templateGroupName"/></div>
+        </div>
+        <br/>
+        <input id="addTemplateButton" type="submit"/>
+        <div id="addTemplateText"></div>
     </div>
 </body>
 <script>
@@ -180,5 +234,171 @@ input.addEventListener("keyup", function(event) {
         window.location.href = "?page="+page;
     }
 });
+
+//添加模板选择窗口弹出
+var close = document.getElementsByClassName("close");
+var addTemplate = document.getElementsByClassName("addTemplate");
+var screenBlack = document.getElementById("screenBlack");
+var addTemplateText = document.getElementsByClassName("addTemplateText");
+addTemplateText[0].addEventListener('click',function (){
+    screenBlack.style.display = "block";
+    addTemplate[0].className="addTemplate open";
+})
+close[0].addEventListener('click',function(){
+    screenBlack.style.display = "none";
+	addTemplate[0].className="addTemplate";
+})
+
+//设置模板文件上传模式的监听
+document.getElementsByName("templateFileMode")[0].addEventListener("change", function(e) {
+    if (e.target.tagName == "SELECT") {
+        //console.log("inside", e.target.value)
+        if(e.target.value=="updata"){
+            document.getElementsByName("templateUrl")[0].value="";
+            document.getElementById("addTemplateFromTemplateFile").style.display = "block";
+            document.getElementById("addTemplateFromTemplateUrl").style.display = "none";
+        } else if(e.target.value=="url"){
+            document.getElementsByName("templateFile")[0].value="";
+            document.getElementById("addTemplateFromTemplateFile").style.display = "none";
+            document.getElementById("addTemplateFromTemplateUrl").style.display = "block";
+        } else if(e.target.value=="none"){
+            document.getElementsByName("templateFile")[0].value="";
+            document.getElementsByName("templateUrl")[0].value="";
+            document.getElementById("addTemplateFromTemplateFile").style.display = "none";
+            document.getElementById("addTemplateFromTemplateUrl").style.display = "none";
+        } 
+    }
+})
+document.getElementById("addTemplateFromTemplateFile").style.display = "block";
+document.getElementById("addTemplateFromTemplateUrl").style.display = "none";
+
+//设置
+document.getElementsByName("templateGroup")[0].addEventListener("change", function(e) {
+    if (e.target.tagName == "SELECT") {
+        //console.log("inside", e.target.value)
+        if(e.target.value=="new"){
+            document.getElementsByName("templateGroupName")[0].value="";
+            document.getElementById("addTemplateFromTemplateGroupName").style.display = "block";
+        }
+    }
+})
+document.getElementById("addTemplateFromTemplateGroupName").style.display = "none";
+
+document.getElementById("addTemplateButton").addEventListener("click",function (){
+
+    //获取各种元素的obj
+    templateNameObj = document.getElementsByName("templateName")[0]
+    templateIMGObj = document.getElementsByName("templateIMG")[0]
+    templateHtmlObj = document.getElementsByName("templateHtml")[0]
+    templateFileModeObj = document.getElementsByName("templateFileMode")[0]
+    templateFileObj = document.getElementsByName("templateFile")[0]
+    templateUrlObj = document.getElementsByName("templateUrl")[0]
+    templateGroupObj = document.getElementsByName("templateGroup")[0]
+    templateGroupNameObj = document.getElementsByName("templateGroupName")[0]
+
+    addTemplateText = document.getElementById("addTemplateText")//提示语
+    
+    // 用FormData传输
+    var fd = new FormData();
+    /*
+    templateGroup = templateGroupObj
+    templateGroupName = templateGroupNameObj
+    */
+    //模板名称
+    templateName = templateNameObj.value;
+    if(!templateName){
+        addTemplateText.innerText = "请输入模板名称";
+        alert("请输入模板名称");
+        return;
+    }
+    fd.append("templateName", templateName);
+
+    //模板封面
+    if (!templateIMGObj.files[0]) {
+        addTemplateText.innerText = "请选择模板封面文件";
+        alert("请选择模板封面文件！");
+        return;
+    }
+    fd.append("templateIMG", templateIMGObj.files[0]);
+
+    //模板html
+    if (!templateHtmlObj.files[0]) {
+        addTemplateText.innerText = "请选择模板html文件";
+        alert("请选择模板html文件！");
+        return;
+    }
+    fd.append("templateHtml", templateHtmlObj.files[0]);
+
+    //模板静态文件上传模式、文件、url
+    if (!templateFileModeObj.value) {
+        addTemplateText.innerText = "请选择模板静态文件上传模式";
+        alert("请选择模板静态文件上传模式");
+        return;
+    }
+    fd.append("templateFileMode", templateFileModeObj.value);
+    if (templateFileModeObj.value == "updata"){
+        if (!templateFileObj.files[0]) {
+            addTemplateText.innerText = "请选择模板静态zip文件";
+            alert("请选择模板静态zip文件");
+            return;
+        }
+        fd.append("templateFile", templateFileObj.files[0]);
+    }else if(templateFileModeObj.value == "url"){
+        if (!templateUrlObj.value) {
+            addTemplateText.innerText = "请输入静态文件url";
+            alert("请输入静态文件url");
+            return;
+        }
+        fd.append("templateUrl", templateUrlObj.value);
+    }
+
+    //分组 、新分组
+    if (!templateGroupObj.value) {
+        addTemplateText.innerText = "请选择模板分组";
+        alert("请选择模板分组");
+        return;
+    }
+    fd.append("templateGroup", templateGroupObj.value);
+    if (templateGroupObj.value == "new") {
+        if (!templateGroupNameObj.value) {
+            addTemplateText.innerText = "请输入新模板分组";
+            alert("请输入新模板分组");
+            return;
+        }
+        fd.append("templateGroupName", templateGroupNameObj.value);
+    }
+    //发送请求
+    let xhr = new XMLHttpRequest();
+    xhr.open("post", "./api/template.php?do=add", true);
+    
+    //发生错误
+    xhr.onerror = function (e) {
+        alert("发生错误：" + e);
+    }
+    //进度
+    xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable) {
+            // 文件上传进度
+            // 获取百分制的进度
+            let filePercent = Math.round(e.loaded / e.total * 100);
+            // 长度根据进度条的总长度等比例扩大
+            //probg.style.width = progress.clientWidth / 100 * percent + "px";
+            // 进度数值按百分制来
+            addTemplateText.innerText = "上传进度：" + filePercent + "%";
+        }
+    }
+    //请求成功 等返回结果
+    xhr.onload = function (e) {
+        addTemplateText.innerText = e.currentTarget.responseText;
+        alert(e.currentTarget.responseText);
+        if(e.currentTarget.responseText=="模板添加成功"){
+            location.reload();
+        }
+        
+    }
+
+    xhr.send(fd);//发送请求！！！
+});
+
 </script>
 </html>

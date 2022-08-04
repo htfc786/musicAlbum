@@ -76,7 +76,7 @@ $userData = mysqli_query($db,"select * from user limit $startRow,$adminUserPageN
             <!--面板的主体-->
             <!--在面板中嵌入一个表格-->
             <?php
-            if (mysqli_num_rows($templatesData)==0){   //没有数据
+            if (mysqli_num_rows($userData)==0){   //没有数据
                 echo <<<END
                 <div class="panel-heading">
                     <h3 class="panel-title">暂无数据</h3>
@@ -169,30 +169,28 @@ $userData = mysqli_query($db,"select * from user limit $startRow,$adminUserPageN
                 ?>
             </ul>
         </div>
-        <div id="screenBlack" style="display:none;"></div>
-        <!-- https://blog.csdn.net/pengxiang1998/article/details/105705755 -->
-        <div class="addUser">
-            <div class="title">
-                <div class="text">添加用户</div>
-                <div class="close">X</div>
-            </div>
-            <hr style="border: 1px solid #444;">
-            <br/>
-            <div class="addUserFrom">
-                用户名：<input type="text" name="username"/><br/>
-                密码：<input type="password" name="password"/><br/>
-                确认密码：<input type="password" name="confirm"/><br/>
-                <div style="text-align: left;">
-                    用户权限：
-                    <input type="radio" name="isAdmin" value="no"/>用户
-                    <input type="radio" name="isAdmin" value="yes"/>管理员
-                </div><br/>
-            </div>
-            <br/>
-            <input type="submit" onclick="addUser();"/>
-            <div id="addUserText"></div>
+    </div>
+    <div id="screenBlack" style="display:none;"></div>
+    <!-- https://blog.csdn.net/pengxiang1998/article/details/105705755 -->
+    <div class="addUser">
+        <div class="title">
+            <div class="text">添加用户</div>
+            <div class="close">X</div>
         </div>
-        
+        <hr style="border: 1px solid #444;"><br/>
+        <div class="addUserFrom">
+            用户名：<input type="text" name="username"/><br/>
+            密码：<input type="password" name="password"/><br/>
+            确认密码：<input type="password" name="confirm"/><br/>
+            <div style="text-align: left;">
+                用户权限：
+                <input type="radio" name="isAdmin" value="no"/>用户
+                <input type="radio" name="isAdmin" value="yes"/>管理员
+            </div><br/>
+        </div>
+        <br/>
+        <input type="submit" onclick="addUser();"/>
+        <div id="addUserText"></div>
     </div>
 </body>
 <script>
@@ -308,7 +306,6 @@ function addUser(){
     fd.append("password", password);
     fd.append("confirm", confirm);
     fd.append("isAdmin", isAdmin);
-    console.log(fd)
     
     let xhr = new XMLHttpRequest();
     xhr.open("post", "./api/user.php?do=add", true);

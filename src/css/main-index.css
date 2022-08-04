@@ -1,62 +1,166 @@
+/* background-color: #ff6f6f;*/
 body {
-    background: #f3f3f3;
+    background: #fff;/*#f3f3f3*/
+    margin: 0 auto 0 auto;
+    overflow-x: hidden;
 }
 #big-border {
     background: #fff;
+    width: 500px;
     margin: 0 auto;
     padding: 10px;
 }
 #page-title {
+    margin: 10px 0 0 0;
     text-align: center;
 }
-#little-page-title{
-    text-align: right;
+.new-album{
+    width:300px;
 }
-.album{
-    margin: 5;
+#album-list{
+    position: relative;
+    width: 500px;
+    min-height: 100%;
+}
+.item-block {
+    width: 100%;
+    height: 306px;
+    overflow: hidden;
+    padding-bottom: 20px;
     position: relative;
 }
-.album fieldset{
-    width:300px;
-    height: 120px;
+.item-date {
+    position: relative;
+    width: 500px;
+    height: 27px;
+    margin-top: 5px;
 }
-.album-name{
-    font-size:20px;
+.item-timediv {
+    width: 10px;
+    height: 28px;
+    background-color: #444;
+    position: relative;
+    float: left;
 }
-.album-time{
-    font-size:10px;
-    color:#999;
+.item-time {
+    position: relative;
+    float: left;
+    left: 10px;
+    font-size: 23px;
+    color: rgba(0, 0, 0, 0.6);
 }
-.album-photonum{
-    font-size:10px;
-    color:#999;
+.sharebtn {
+    position: relative;
+    top: 2px;
+    left: 408px;
+    width: 75px;
+    height: 35.7px;
+    box-shadow: 0px 1px 4px rgb(0 0 0 / 10%);
+    /* opacity: 0; */
+    /* display: none; */
 }
-.album-getphoto{
+.shareicon {
+    width: 100%;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+}
+.item {
+    position: relative;
+    width: 463px;
+    left: 15px;
+    margin-top: 5px;
+    height: 260px;
+    background-color: white;
+    border: 3px solid #fff;
+    box-shadow: 0px 1px 4px rgb(0 0 0 / 10%);
+    border-radius: 8px;
+}
+.item-pic {
+    position: absolute;
+    width: 180px;
+    left: 10px;
+    margin-top: 10px;
+    height: 180px;
+    /* overflow: hidden; */
+    background-position: center;
+    background-size: cover;
+}
+.item-word {
+    position: absolute;
+    left: 210px;
+    top: 12px;
+    font-size: 25px;
+    line-height: 34px;
+    width: 247px;
+    height: 102px;
+    color: #6dc2f9;
+    overflow: hidden;
+}
+.item-pv {
+    position: absolute;
+    width: 200px;
+    text-align: left;
+    /* height: 40px; */
+    line-height: 25px;
+    font-size: 18px;
+    left: 210px;
+    /* top: 110px; */
+    bottom: 65px;
+    color: rgba(0, 0, 0, 0.5);
+}
+.get-pic {
     position: absolute;
     left: 10px;
-    width: 140px;
+    width: 210px;
     height: 40px;
+    /* float: left; */
     line-height: 40px;
-    top: 90px;
+    top: 206px;
     border: 1px solid #444;
+    /* background-color: #D2D2D2; */
     text-align: center;
     color: #444;
     border-radius: 6px 6px 6px 6px;
     font-size: 18px;
 }
-.album-edit{
+.item-edit {
     background-color: #444;
+    /* margin-left: 125px; */
     border-radius: 6px;
-    width: 140px;
+    width: 210px;
     height: 42px;
     position: absolute;
     color: #fff;
     text-align: center;
     line-height: 42px;
     font-size: 20px;
-    top: 90px;
-    left: 175px;
+    top: 206px;
+    left: 241px;
 }
-.new-album{
-    width:300px;
+.item-del {
+    background-image: url(https://s2.kagirl.cn/template/icon%2Fdel.png);
+    width: 25px;
+    height: 30px;
+    opacity: 0.3;
+    position: absolute;
+    left: 420px;
+    top: 156px;
+    z-index: 10;
+}
+#newbookbtn {
+    left: 30px;
+    width: 485px;
+    height: 60px;
+    background-color: #555;
+    border-radius: 5px;
+    font-weight: bold;
+    top: 10px;
+    font-size: 25px;
+    text-align: center;
+    line-height: 60px;
+    color: #fff;
+    /* display: none; */
 }
