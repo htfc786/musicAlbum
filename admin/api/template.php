@@ -2,9 +2,50 @@
 /admin/api/template.php
 系统管理-api-模板管理
 POST请求
+添加模板
+    ?do=add
+    POST:
+        
 */ ?>
 <?php session_start(); // 开启Session ?>
 <?php
+//删除文件、文件夹函数
+function delFile($path){
+    //清空文件夹函数和清空文件夹后删除空文件夹函数的处理
+    //try catch
+    try {
+        //如果是目录则继续
+        if(is_dir($path)){
+            //if (!substr($path ,-1)=="/"){}
+            //扫描一个文件夹内的所有文件夹和文件并返回数组
+            $p = scandir($path);
+            foreach($p as $val){
+            //排除目录中的.和..
+                if($val !="." && $val !=".."){
+                    //如果是目录则递归子目录，继续操作
+                    if(is_dir($path.$val)){
+                        //子目录中操作删除文件夹和文件
+                        deldir($path.$val.'/');
+                        //目录清空后删除空文件夹
+                        rmdir($path.$val.'/');
+                    } else {
+                        //如果是文件直接删除
+                        unlink($path.$val);
+                    }
+                }
+            }
+            rmdir($path); 
+        } else {
+            if(is_file($path)){
+                unlink($path);
+            }
+        }
+        return 1;
+    } catch(Exception $_) {
+        return 0;
+    }
+}
+
 if (!(isset($_SESSION['islogin']) && isset($_SESSION['isadmin']) && $_SESSION['isadmin'])) {
     // 没有登录
     //header('refresh:0; url=./login.php');
@@ -108,6 +149,13 @@ switch ($_GET["do"])
         }
         break;
 
+    case "del":
+        if(!(isset($_POST["templateId"]) && $_POST["templateId"])){
+            echo "请求参数错误";
+            return;
+        }
+        break;
+
     default:
         echo "没有此方式";
         return;
@@ -132,7 +180,6 @@ mysqli_query($db,"set names '$dbEncoding'"); //设定字符集
 switch ($_GET["do"])
 {
     case "add":
-        
         $templateName = $_POST["templateName"];
 
         //是否已经有了
@@ -224,6 +271,7 @@ switch ($_GET["do"])
             // - $_POST["templateGroupName"] new
             $templateGroupName = $_POST["templateGroupName"];
             //插入模板分组
+            //echo "insert into templatesgroup (groupName) values('$templateGroupName')";
             $insertOk = mysqli_query($db,"insert into templatesgroup (groupName) values('$templateGroupName')");  
             if (!$insertOk){
                 echo "提示：新模板分组创建失败\n";
@@ -245,7 +293,57 @@ switch ($_GET["do"])
         }
         echo "模板添加成功";
         
+        break;
 
+    case "del":
+        $templateId = $_POST["templateId"];
+        //有这模板吗？
+        $userInfo = mysqli_query($db,"SELECT * FROM templates WHERE id = $templateId");
+        if(!mysqli_num_rows($userInfo)==1) {  
+            echo "没这模板！";
+            return;
+        }
+
+        $row = mysqli_fetch_array($userInfo);
+        $templatName = $row['templatName'];
+        $templatFileMode = $row['templatFileMode'];
+
+        $templatIMGPath = "../..".$row['templatIMG'];
+        $templatHtmlPath = "../..".$row['templatHtmlPath'];
+        $templatFileUrl = "../../templates/src/$templateId/";
+
+        //删除该模板下的所有数据
+        //删除静态文件 上传上来的才删
+        if ($templatFileMode == "updata"){
+            $status = delFile($templatFileUrl);    
+            if (!$status){
+                echo "删除失败";
+                return;
+            }
+        }
+        //删除封面
+        $status = delFile($templatIMGPath);    
+        if (!$status){
+            echo "删除失败";
+            return;
+        }
+        //删除封面
+        $status = delFile($templatHtmlPath);    
+        if (!$status){
+            echo "删除失败";
+            return;
+        }
+        
+        //删库跑路（不是）
+        $delState = mysqli_query($db,"DELETE FROM templates WHERE id = $templateId");
+        if (!$delState){
+            //删除失败
+            echo "删除失败";
+            return;
+        }
+
+        //删除成功
+        echo "模板：$templatName 删除成功";
         break;
 
     default:

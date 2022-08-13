@@ -95,6 +95,7 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                         <td>静态文件存储方式</td>
                         <td>上传用户</td>
                         <td>分类</td>
+                        <td>是否支持音乐播放</td>
                         <td>操作</td>
                     </tr>
                 </thead>
@@ -146,9 +147,10 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                     <td>$templatFileModeHtml</td>
                     <td>UID$templatUpdateUserId</td>
                     <td>$templatGroup</td>
+                    <td style="font-size: x-large;">√</td>
                     <td>
                         <a href="">编辑</a> |
-                        <a href="javascript:void(0);" onclick="del()">删除</a>
+                        <a href="javascript:void(0);" onclick="delTemplate('$templatesId')">删除</a>
                     </td>
                 </tr>
                 END;
@@ -214,8 +216,15 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
             <div id="addTemplateFromTemplateGroup">模板分类：
                 <select name="templateGroup">
                     <option value="0">无分类</option>
+                    <?php
+                    $templatesgroupData = mysqli_query($db,"select id,groupName from templatesgroup;");
+                    while ($templatesgroupDataRow=mysqli_fetch_assoc($templatesgroupData)){
+                        $templatesgroupId = $templatesgroupDataRow["id"];
+                        $templatesgroupName = $templatesgroupDataRow["groupName"];
+                        echo "<option value='$templatesgroupId'>$templatesgroupName</option>";
+                    }
+                    ?>
                     <option value="new">新建分类</option>
-                    
                 </select></div>
             <div id="addTemplateFromTemplateGroupName">新分类名称：<input type="text" name="templateGroupName"/></div>
         </div>
@@ -277,8 +286,10 @@ document.getElementsByName("templateGroup")[0].addEventListener("change", functi
     if (e.target.tagName == "SELECT") {
         //console.log("inside", e.target.value)
         if(e.target.value=="new"){
-            document.getElementsByName("templateGroupName")[0].value="";
             document.getElementById("addTemplateFromTemplateGroupName").style.display = "block";
+        }else{
+            document.getElementsByName("templateGroupName")[0].value="";
+            document.getElementById("addTemplateFromTemplateGroupName").style.display = "none";
         }
     }
 })
@@ -399,6 +410,37 @@ document.getElementById("addTemplateButton").addEventListener("click",function (
 
     xhr.send(fd);//发送请求！！！
 });
+
+function delTemplate(templateId){
+    //console.log(templateId)
+    //提示框
+    if(!confirm("此操作将会删除ID为 "+templateId+" 这个模板，确定要继续吗？")){
+        return;
+    }
+    //提示框2
+    if(!confirm("确定要删除ID为 "+templateId+" 的这个模板吗？")){
+        return;
+    }
+    //发送删除请求
+    // 用FormData传输
+    var fd = new FormData();
+    fd.append("templateId", templateId);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("post", "./api/template.php?do=del", true);
+    
+    //发生错误
+    xhr.onerror = function (e) {
+        alert("发生错误：" + e);
+    }
+    //请求成功 等返回结果
+    xhr.onload = function (e) {
+        alert(e.currentTarget.responseText);
+        location.reload();
+    }
+
+    xhr.send(fd);//发送请求！！！
+}
 
 </script>
 </html>

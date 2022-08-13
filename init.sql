@@ -38,7 +38,7 @@ CREATE TABLE photos (
 
 CREATE TABLE templatesgroup (
   id int unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-  groupName int unsigned NOT NULL COMMENT '模板分类名称',
+  groupName NOT NULL COMMENT '模板分类名称',
   PRIMARY KEY (id)
 )CHARSET=utf8mb4;
 
