@@ -6,7 +6,7 @@ CREATE TABLE user (
   id int unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
   username char(25) NOT NULL COMMENT '用户名',
   password char(255) NOT NULL COMMENT '密码',
-  isDel tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
+  isAdmin tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (id)
 )CHARSET=utf8mb4;
 
@@ -15,11 +15,11 @@ CREATE TABLE album (
   albumName char(20) NOT NULL COMMENT '名称',
   albumIntroduce char(255) DEFAULT NULL COMMENT '简介',
   albumCreateDate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
-  albumTemplateId int unsigned NOT NULL COMMENT '模板id',
-  albumTemplate char(20) COMMENT '模板',
+  albumCover TEXT NOT NULL COMMENT'相册封面 (没有值为0)',
+  albumTemplateId int unsigned NOT NULL DEFAULT 0 COMMENT '模板id',
   albumUseMusic tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否使用音乐',
   albumMusicName char(64) COMMENT '音乐名称',
-  albumMusicUrl char(255) COMMENT '音乐url',
+  albumMusicUrl TEXT COMMENT '音乐url',
   albumMreatorId int NOT NULL COMMENT '创建用户id',
   isDel tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (id)
@@ -30,15 +30,16 @@ CREATE TABLE photos (
   mreatorId int unsigned NOT NULL COMMENT '用户id',
   albumId int unsigned NOT NULL COMMENT '相册id',
   photoOrder int unsigned NOT NULL COMMENT '图片顺序 从1开始',
-  photoPath char(255) NOT NULL COMMENT '图片路径',
-  photoUrl char(255) NOT NULL COMMENT '图片url',
+  photoPath TEXT NOT NULL COMMENT '图片路径',
+  photoUrl TEXT NOT NULL COMMENT '图片url',
+  originalName TEXT COMMENT '原图名称',
   photoIntroduce char(16) DEFAULT NULL COMMENT '图片介绍',
   PRIMARY KEY (id)
 )CHARSET=utf8mb4;
 
 CREATE TABLE templatesgroup (
   id int unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-  groupName NOT NULL COMMENT '模板分类名称',
+  groupName char(64) NOT NULL COMMENT '模板分类名称',
   PRIMARY KEY (id)
 )CHARSET=utf8mb4;
 

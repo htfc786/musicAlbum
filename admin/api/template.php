@@ -276,12 +276,13 @@ switch ($_GET["do"])
             if (!$insertOk){
                 echo "提示：新模板分组创建失败\n";
                 $templateGroupId = "0";
+            } else {
+                //模板分组id
+                $newTemplateGroupId = mysqli_query($db,"select id from templatesgroup where groupName = '$templateGroupName'");
+                //print_r($newTemplateGroupId);
+                $newTemplateGroupId = mysqli_fetch_array($newTemplateGroupId);
+                $templateGroupId = $newTemplateGroupId["id"];
             }
-            //模板分组id
-            $newTemplateGroupId = mysqli_query($db,"select id from templatesgroup where groupName = '$templateGroupName'");
-            $newTemplateGroupId = mysqli_fetch_array($newTemplateGroupId);
-            $templateGroupId = $newTemplateGroupId["id"];
-
         }
         //$templateGroupId
         //echo "UPDATE templates SET templatIMG = '$coverSaveFileUrl', templatHtmlPath = '$htmlSaveFileUrl', templatFileMode = '$templateFileMode', templatFileUrl = '$srcSaveFileUrl', templatUpdateUserId = $userid, templatGroupId = $templateGroupId WHERE id = $templateId;";

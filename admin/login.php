@@ -54,15 +54,15 @@
         mysqli_query($db,"set names '$dbEncoding'"); //设定字符集 
         
         //查询用户是否存在
-        $rs = mysqli_query($db,"select id,username,password from user where username = '$_POST[username]' and password = '$_POST[password]' and isAdmin = 1");  //执行sql！！！
+        $userQuery = mysqli_query($db,"select id,username,password from user where username = '$_POST[username]' and password = '$_POST[password]' and isAdmin = 1");  //执行sql！！！
         //获取有多少个（正常应该有只一个）
         //没有说明户名或密码不正确或不是管理员
-        if(!mysqli_num_rows($rs)==1) {  
+        if(!mysqli_num_rows($userQuery)==1) {  
             $msgHtml = '<span style="color:red;">用户名或密码不正确！</span>'; 
             goto end; //跳转到结束 
         }
         //读取数据
-        $row = mysqli_fetch_array($rs);  //将数据以索引方式储存在数组中  
+        $row = mysqli_fetch_array($userQuery);  //将数据以索引方式储存在数组中  
         $userid = $row['id'];
         $username = $row['username'];
         //Session

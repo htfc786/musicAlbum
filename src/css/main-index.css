@@ -22,6 +22,14 @@ body {
     width: 500px;
     min-height: 100%;
 }
+.album-red-msg{
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #F00;
+    font-size: 25px;
+    font-weight: bold;
+}
 .item-block {
     width: 100%;
     height: 306px;
@@ -98,6 +106,18 @@ body {
     height: 102px;
     color: #6dc2f9;
     overflow: hidden;
+}
+.item-num {
+    position: absolute;
+    width: 200px;
+    text-align: left;
+    /* height: 40px; */
+    line-height: 25px;
+    font-size: 18px;
+    left: 210px;
+    top: 140px;
+    /* bottom: 65px; */
+    color: rgba(0, 0, 0, 0.5);
 }
 .item-pv {
     position: absolute;

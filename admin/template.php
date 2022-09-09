@@ -17,6 +17,7 @@ $dbUser = $confIniArray["dbUser"];
 $dbPassword = $confIniArray["dbPassword"]; // 请在此修改数据库密码
 $dbDatabase = $confIniArray["dbDatabase"];
 $dbPort = $confIniArray["dbPort"];
+$dbEncoding = $confIniArray["dbEncoding"];
 
 $adminTemplatesPageNum = $confIniArray["adminTemplatesPageNum"];
 
@@ -29,7 +30,7 @@ if (isset($_GET["page"])&&$_GET["page"]){
 //连接数据库
 $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);    //连接数据库  
 //mysql_select_db("my_test");  //选择数据库  
-mysqli_query($db,"set names 'utf-8'"); //设定字符集 
+mysqli_query($db,"set names '$dbEncoding'"); //设定字符集 
 
 //获取templates表有多少条数据 
 $templatesDataNum = mysqli_query($db,"select count(*) from templates;"); 

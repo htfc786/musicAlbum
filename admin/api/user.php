@@ -43,8 +43,7 @@ if(!(isset($_GET["do"]) && $_GET["do"])){
 }
 
 //此处按需判断其他参数
-switch ($_GET["do"])
-{
+switch ($_GET["do"]) {
     case "del": //删除用户参数判断
         if(!(isset($_POST["uid"]) && $_POST["uid"])){
             echo "请求参数错误";
@@ -90,8 +89,7 @@ $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);
 //mysql_select_db("my_test");  //选择数据库  
 mysqli_query($db,"set names '$dbEncoding'"); //设定字符集 
 
-switch ($_GET["do"])
-{
+switch ($_GET["do"]) {
     case "del": //此处为用户部分删除代码
         //有这人吗？
         $userInfo = mysqli_query($db,"SELECT * FROM user WHERE id = $uid");

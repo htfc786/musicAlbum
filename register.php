@@ -34,7 +34,7 @@
         $user = $_POST["username"];$psw = $_POST["password"]; 
         //连接数据库  
         $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);
-        mysqli_query($db,"set names 'utf-8'"); //设定字符集  
+        mysqli_query($db,"set names '$dbEncoding'"); //设定字符集  
         //查询user表里是否已经有了此用户
         $result = mysqli_query($db,"select username from user where username = '$_POST[username]'");
 
