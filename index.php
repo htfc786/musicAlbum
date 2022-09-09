@@ -87,9 +87,6 @@ $dbPort = $confIniArray["dbPort"];
                             $albumCover = "./src/image/index-onimage.png";
                         }
                     }
-                    
-
-
                     //$albumPhotoQuery = mysqli_query($db," SELECT * FROM photos WHERE albumId = $albumId");
                     //$albumPhotoNum = mysqli_fetch_assoc($albumPhotoQuery);  //获取有多少个
                     echo <<<END

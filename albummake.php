@@ -28,9 +28,9 @@ $PrePath = $confIniArray["PrePath"];
 
 if (!isset($_SESSION['islogin'])) {
     // 没有登录
-    echo "<h4>需要登录才能访问此页面</h4>";
     header('refresh:0; url='.$PrePath.'login.php');
-    echo 'refresh:0; url='.$PrePath.'login.php';
+    echo "<h4>需要登录才能访问此页面</h4>";
+    //echo 'refresh:0; url='.$PrePath.'login.php';
     return;
 }
 $userid = $_SESSION['userid'];
