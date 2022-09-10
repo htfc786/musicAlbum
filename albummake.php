@@ -509,7 +509,14 @@ function delImage(imageId) {    //删除图片
 
     xhr.send(fd);//发送请求！！！
 }
+let moveImageCanRun = true;
 function moveImage(imageId, imageOrder, action){
+    if (!moveImageCanRun){
+        //console.log("moveImage can not run")
+        return;
+    }
+    moveImageCanRun = false;
+    //console.log("moveImage before")
     //获取图片列表 image-box
     let imageBox = document.getElementById("image-box");
 
@@ -532,9 +539,11 @@ function moveImage(imageId, imageOrder, action){
     //请求成功 等返回结果
     xhr.onload = function (e) {
         //alert(e.currentTarget.responseText);
+        //console.log("moveImage after")
         getImage();
         //imageBox.insertBefore(nextObj,obj);
         //imageBox.children
+        moveImageCanRun = true;
     }
 
     xhr.send(fd);//发送请求！！！

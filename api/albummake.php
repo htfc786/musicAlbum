@@ -548,8 +548,10 @@ switch ($_GET["do"]) {
 
         } else if ($action == "down"){    //向后
             //获取有多少条数据 
-            $dataNum = mysqli_query($db,"SELECT count(*) FROM photos WHERE albumId = $albumId;"); 
-            $dataNum = mysqli_fetch_assoc($userDataNum)["count(*)"];
+            $dataNumQuery = mysqli_query($db,"SELECT max(photoOrder) FROM photos WHERE albumId = $albumId"); 
+            
+            $dataNum = mysqli_fetch_assoc($dataNumQuery)["max(photoOrder)"];
+            print_r($dataNum);
             if ($photoOrder == $dataNum){
                 echo "移动成功";
                 break;
