@@ -35,6 +35,7 @@ $username = $_SESSION['username'];//用户名
 //判断aid
 if (!getId()) {
     echo "<h4 id='page-title'>aid参数出错</h4>";
+    return;
 }
 //配置数据库
 $confIniArray = parse_ini_file("./conf.ini", true);

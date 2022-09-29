@@ -4,6 +4,7 @@ body {
 .image-card{
     width: 100%; 
     position: relative;
+    max-width: 500px;
 }
 .image-index{
     width: 40px;

@@ -517,3 +517,134 @@ body {
     color: white;
     font-size: 22px;
 }
+/* 写文字 */
+#write{
+    background-color: rgb(246, 246, 246);
+}
+#write-header {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    left: 0;
+    bottom: 0px;
+    width: 100%;
+    height: 60px;
+    background-color: #fff;
+    z-index: 999;
+}
+.write-close {
+    position: absolute;
+    width: 100px;
+    height: 40px;
+    margin-top: 10px;
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 19px;
+    line-height: 40px;
+    text-align: center;
+    padding-left: 0px;
+    margin-left: 20px;
+}
+#write-albumname {
+    line-height: 30px;
+    width: 470px;
+    padding: 6px 12px;
+    background: #e4e4e4;
+    font-size: 20pt;
+    resize: none;
+    outline: none;
+    margin: 6px 3px;
+    border: 1px solid rgba(0,0,0,0.12);
+    -webkit-appearance: none;
+}
+.write-tip{
+    padding: 0px;
+    border-bottom: 1px solid #ddd;
+    color: rgb(64,64,64);
+    font-size: 18px;
+    height: 5px;
+}
+.write-item {
+    width: 500px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    background-color: white;
+}
+.write-bigpic {
+    width: 160px;
+    margin: 8px;
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #BFBFBF;
+    box-shadow: 2px 2px 3px #aaaaaa;
+    -webkit-touch-callout: none;
+}
+.write-editwords {
+    position: absolute;
+    top: 8px;
+    left: 180px;
+    height: 100px;
+    width: 260px;
+    resize: none;
+    border: none;
+    border-radius: 4px;
+    font-size: 22px;
+    line-height: 30px;
+    color: #555;
+    background-color: #fff;
+    padding: 6px 12px;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+.write-bigup {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+}
+.write-bigdown {
+    position: absolute;
+    bottom: 8px;
+    right: 66px;
+}
+#write-getInfo-loading{
+    position: absolute;
+    /* top: 40%; */
+    width: 100px;
+    /* left: 100px; */
+    height: 135px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#write-getInfo-loading-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: black;
+    opacity: 0.68;
+}
+#write-getInfo-loading-image{
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    left: 16px;
+    animation: image-turn 1s linear infinite;
+}
+#write-getInfo-loading-text{
+    position: absolute;
+    line-height: 70px;
+    top: 70px;  
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 1;
+    color: white;
+    font-size: 22px;
+}

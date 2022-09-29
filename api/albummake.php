@@ -42,6 +42,24 @@ function arrayLen($length){
     } 
     return $array; 
 } 
+//移动图片日志
+function moveImageLog($db,$albumId,$photoId,$action,$isOK1,$isOK2,$photoOrder,$lastPhotoOrder){
+    $dataQuery = mysqli_query($db,"SELECT id,photoOrder FROM photos WHERE albumId = $albumId ORDER BY photos.photoOrder ASC"); 
+    //SELECT id,photoOrder FROM photos WHERE albumId = $albumId ORDER BY photos.photoOrder ASC
+    //log 
+    $username = $_SESSION['username'];
+    $userid = $_SESSION['userid'];
+    $nowDate = date('Y-m-d H:i:s');
+    error_log("[$nowDate] user=\"$username\"(UID$userid) album=$albumId photo=$photoId action=$action \n                      isOK1=$isOK1 isOK2=$isOK2 photoOrder=$photoOrder lastPhotoOrder=$lastPhotoOrder \n", 3, "../photoMove.log");
+    
+    $dataLen = mysqli_num_rows($dataQuery);
+    error_log("                album row info: (albumId=$albumId) (dataLen=$dataLen) \n",3,"../photoMove.log");
+    while ($row=mysqli_fetch_assoc($dataQuery)){
+        $id = $row["id"];
+        $photoOrder = $row["photoOrder"];
+        error_log("                 - id=$id photoOrder=$photoOrder \n",3,"../photoMove.log");
+    }
+}
 
 if (!(isset($_SESSION['islogin']))) {
     // 没有登录
@@ -83,6 +101,23 @@ switch ($_GET["do"]) {
             return;
         }
         break;
+
+    //改相册名称
+    case "changeAlbumName":
+        if ($_SERVER['REQUEST_METHOD'] != 'POST'){
+            echo "请求方式错误";
+            return;
+        }
+        if(!(isset($_POST["aid"]) && $_POST["aid"])){
+            echo "缺少请求参数";
+            return;
+        }
+        if(!(isset($_POST["newAlbumName"]) && $_POST["newAlbumName"])){
+            echo "缺少请求参数";
+            return;
+        }
+        break;
+
     //模板
     //获取模板
     case "getTemplate": 
@@ -159,6 +194,27 @@ switch ($_GET["do"]) {
         }
         break;
 
+    //文字
+    //改文字
+    case "changeText":
+        if ($_SERVER['REQUEST_METHOD'] != 'POST'){
+            echo "请求方式错误";
+            return;
+        }
+        if(!(isset($_POST["aid"]) && $_POST["aid"])){
+            echo "缺少请求参数";
+            return;
+        }
+        if(!(isset($_POST["data"]) && $_POST["data"])){
+            echo "缺少请求参数";
+            return;
+        }
+        if(!json_decode($_POST["data"],true)){
+            echo "json参数出错";
+            return;
+        }
+        break;
+    
     //没有此方式
     default:
         echo "没有此方式";
@@ -239,6 +295,35 @@ switch ($_GET["do"]) {
             return;
         }
         echo "删除成功";
+        break;
+ 
+    //改相册名称
+    case "changeAlbumName":
+        $aid = $_POST["aid"];
+        $newAlbumName = $_POST["newAlbumName"];
+
+        $newAlbumName = str_replace("\n"," ",$newAlbumName);
+        $newAlbumName = str_replace("\r"," ",$newAlbumName);
+        $newAlbumName = str_replace("\r\n"," ",$newAlbumName);
+        //有这相册吗？
+        $albumQuery = mysqli_query($db,"SELECT albumMreatorId FROM album WHERE id = $aid");
+        if(!mysqli_num_rows($albumQuery)==1) {  
+            echo "没这相册！";
+            return;
+        }
+        //是相册的作者吗？
+        $albumMreatorId = mysqli_fetch_array($albumQuery)["albumMreatorId"];
+        if($albumMreatorId!=$userid){
+            echo "您不是此相册的作者！！！";
+            return;
+        }
+        //更改数据库
+        $changeOk = mysqli_query($db,"UPDATE album SET albumName = '$newAlbumName' WHERE id = $aid;");
+        if (!$changeOk){
+            echo "对不起，系统正忙";
+            return;
+        }
+        echo "更改成功";
         break;
 
     //模板
@@ -359,6 +444,10 @@ switch ($_GET["do"]) {
             $photoId = $imageRow['id'];
             $photoOrder = $imageRow['photoOrder'];
             $photoText = $imageRow['photoText'];
+            //
+            if (!$photoText){
+                $photoText = "";
+            }
             //生成数组
             $imageDataArr=array(
                 "imageId" => $photoId,
@@ -473,7 +562,7 @@ switch ($_GET["do"]) {
     case "delImage":
         $imageId = $_POST["imageId"];
         //有毛有
-        $imageQuery = mysqli_query($db,"SELECT mreatorId,photoPath FROM photos WHERE id = $imageId");
+        $imageQuery = mysqli_query($db,"SELECT mreatorId,albumId,photoOrder,photoPath FROM photos WHERE id = $imageId");
         if(!mysqli_num_rows($imageQuery)==1) {  
             echo "没这图！";
             return;
@@ -495,6 +584,15 @@ switch ($_GET["do"]) {
         //删除数据库
         $status = mysqli_query($db," DELETE FROM photos WHERE id=$imageId;");
         if (!$status){    
+            echo "删除失败";
+            return;
+        }
+        //更新排序
+        $albumId = $imageRow["albumId"];
+        $photoOrder = $imageRow["photoOrder"];
+        // UPDATE photos SET photoOrder = photoOrder - 1 WHERE photoOrder > $photoOrder AND albumId = $albumId 
+        $isOk1 = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder - 1 WHERE photoOrder > $photoOrder AND albumId = $albumId");
+        if (!$isOk1){
             echo "删除失败";
             return;
         }
@@ -528,23 +626,22 @@ switch ($_GET["do"]) {
                 break;
             }
             //本质上只是调换位置
-            $lastPhotoOrder = $photoOrder - 1; //上一张的
+            $lastPhotoOrder = $photoOrder - 1; //上一张的 //log
             //把上一张的order+1
             //update test SET test=test-1 WHERE test>=5 AND test<=8;
-            $isOk = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder + 1 WHERE photoOrder = $lastPhotoOrder");
-            if (!isOk){
+            $isOk1 = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder + 1 WHERE photoOrder = $lastPhotoOrder");
+            if (!$isOk1){
                 echo "移动失败";
                 return;
             }
-            //把本张的order-1
-            $isOk = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder - 1 WHERE id = $imageId");
-            if (!isOk){
+            //把本张的order-1 
+            $isOk2 = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder - 1 WHERE id = $imageId");
+            if (!$isOk2){
                 echo "移动失败";
                 return;
             }
             
             echo "移动成功";
-            break;
 
         } else if ($action == "down"){    //向后
             //获取有多少条数据 
@@ -560,24 +657,66 @@ switch ($_GET["do"]) {
             $lastPhotoOrder = $photoOrder + 1; //下一张的
             //把下一张的order-1
             //update test SET test=test-1 WHERE test>=5 AND test<=8;
-            $isOk = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder - 1 WHERE photoOrder = $lastPhotoOrder");
-            if (!isOk){
+            $isOk1 = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder - 1 WHERE photoOrder = $lastPhotoOrder");
+            if (!$isOk1){
                 echo "移动失败";
                 return;
             }
             //把本张的order+1
-            $isOk = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder + 1 WHERE id = $imageId");
-            if (!isOk){
+            $isOk2 = mysqli_query($db,"UPDATE photos SET photoOrder = photoOrder + 1 WHERE id = $imageId");
+            if (!$isOk2){
                 echo "移动失败";
                 return;
             }
             
             echo "移动成功";
-            break;
-
         }
 
+        moveImageLog($db,$albumId,$photoId,$action,$isOK1,$isOK2,$photoOrder,$lastPhotoOrder);
+        break;
+    //文字
+    //改文字
+    case "changeText":
+        $aid = $_POST["aid"];
+        $data = json_decode($_POST["data"],true);
+        //有这相册吗？
+        $albumQuery = mysqli_query($db,"SELECT albumMreatorId FROM album WHERE id = $aid");
+        if(!mysqli_num_rows($albumQuery)==1) {  
+            echo "没这相册！";
+            return;
+        }
+        //是相册的作者吗？
+        $albumMreatorId = mysqli_fetch_array($albumQuery)["albumMreatorId"];
+        if($albumMreatorId!=$userid){
+            echo "您不是此相册的作者！！！";
+            return;
+        }
+        //<--
+        //获取图片张数
+        $albumPhotoQuery = mysqli_query($db," SELECT photoText FROM photos WHERE albumId = $aid");
+        //$albumPhotoNum = mysqli_fetch_assoc($albumPhotoQuery)["count(*)"];  //获取有多少个
+        $albumPhotoNum = mysqli_num_rows($albumPhotoQuery);
+        //便利
+        $dataNum = count($data);
+        for($i=0;$i<$albumPhotoNum;$i++){
+            //$data[$i];
+            if($i>$dataNum){ break; } //防止传来的数组不同
+            //if($data[$i]==""){ continue; } 
+            $photoDataRow=mysqli_fetch_assoc($albumPhotoQuery);
+            $photoText = $photoDataRow["photoText"];
 
+            if ($photoText==$data[$i]){
+                continue;
+            }
+
+            $iForPhotoText = $i+1;
+            $newPhotoText = $data[$i];
+            //UPDATE photos SET photoText = '$photoText' WHERE albumId = $aid AND photoOrder = $iForPhotoText;
+            mysqli_query($db,"UPDATE photos SET photoText = '$newPhotoText' WHERE albumId = $aid AND photoOrder = $iForPhotoText;");
+            //echo "UPDATE photos SET photoText = '$photoText' WHERE albumId = $aid AND photoOrder = $iForPhotoText; </br>";
+
+        }
+        echo "改名完成";
         break;
 
     //没有方法

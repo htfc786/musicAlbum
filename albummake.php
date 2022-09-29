@@ -54,7 +54,7 @@ if (!$aid){
 $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);
 mysqli_query($db,"set names '$dbEncoding'"); //设定字符集
 
-$albumDataQuery = mysqli_query($db,"select albumMreatorId from album where id = $aid");
+$albumDataQuery = mysqli_query($db,"SELECT albumName,albumMreatorId,albumTemplateId FROM album WHERE id = $aid");
 if (mysqli_num_rows($albumDataQuery)!=1){//获取有多少个
     echo "没有此相册";
     return;
@@ -66,6 +66,15 @@ if($userid!=$albumMreatorId){//不是主人
     echo "提示：您不是此相册的主人";
     return;
 }
+
+$albumName = $albumData["albumName"];
+
+$albumTemplateId = $albumData["albumTemplateId"];
+$templateDataQuery = mysqli_query($db,"SELECT canWriteText,canPlayMusic FROM templates WHERE id = $albumTemplateId");
+$templateDataData = mysqli_fetch_array($templateDataQuery);
+//canWriteText canPlayMusic
+$canWriteText = $templateDataData["canWriteText"];
+$canPlayMusic = $templateDataData["canPlayMusic"];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,7 +92,7 @@ if($userid!=$albumMreatorId){//不是主人
             <div onclick="chengePage(2)" class="main-footer-btn" style="background-image: url(/src/image/make-music.png);"></div>
             <div onclick="chengePage(3)" class="main-footer-btn" style="background-image: url(/src/image/make-pic.png);"></div>
             <div onclick="chengePage(4)" class="main-footer-btn" style="background-image: url(/src/image/make-write.png);"></div>
-            <div onclick="window.open('/showalbum.php/<?php echo $aid; ?>');" class="main-footer-btn" style="background-image: url(/src/image/make-save.png);"></div>
+            <div onclick="window.open('/albumshow.php/<?php echo $aid; ?>');" class="main-footer-btn" style="background-image: url(/src/image/make-save.png);"></div>
         </div>
         <iframe id="showalbumFrame" name="ifd" onload="changeShowAlbumFrameHeight();" width="100%" frameborder="0" src="/albumshow.php/<?php echo $aid ?>?from=albummake-iframe"></iframe>
         <div onclick="location.href='../';" class="back">返回</div>
@@ -159,8 +168,27 @@ if($userid!=$albumMreatorId){//不是主人
     
     </div>
     <div id="write" style="display: none;">
-        <div id="music-header">
-            <div class="music-close" onclick="chengePage(0)">返回</div>
+        <div id="write-header">
+            <div class="write-close" onclick="chengePage(0)">返回</div>
+        </div>
+        <div style="height: 70px;"></div>
+        <div>
+            <textarea id="write-albumname" maxlength="40" rows="3" placeholder="点击这里给相册写标题（限40字）"><?php echo $albumName; ?></textarea>
+        </div>
+        <div class="write-tip"></div>
+
+        <?php if(!$canWriteText){   //如果不支持文字
+            echo '<div style="margin: 8px; color: #f00; font-size: 20px;">提示：对不起，当前相册使用的模板不支持显示您写的文字</div>';
+        } ?>
+        
+        <div id="write-box">
+            
+        </div>
+
+        <div id="write-getInfo-loading" style="display:none;">
+            <div id="write-getInfo-loading-background"></div>
+            <img id="write-getInfo-loading-image" src="/src/image/make-image-loading.png">
+            <span id="write-getInfo-loading-text">加载中</span>
         </div>
 
     </div>
@@ -171,16 +199,16 @@ if($userid!=$albumMreatorId){//不是主人
 //窗口高度 https://www.jianshu.com/p/193789c14138
 //图片懒加载 https://zhuanlan.zhihu.com/p/55311726
 //节流 https://www.bilibili.com/video/BV17b4y1X7yp
-//移动div https://blog.csdn.net/longlongxue/article/details/7988196
 
 var aid = <?php echo $aid; ?>;
+var albumName = "<?php echo $albumName; ?>"
 // 各个页面的div
 let pageDivList = [];
 pageDivList.push([document.getElementById("main")]); 
 pageDivList.push([document.getElementById("template"),0,0]);//操作的对象，当前分类，当前页面
 pageDivList.push([document.getElementById("music")]);
 pageDivList.push([document.getElementById("image"),0]);//操作的对象,是否需要重新加载
-pageDivList.push([document.getElementById("write")]);
+pageDivList.push([document.getElementById("write"),0]);
 
 //当前页面 div的
 let nowPage;
@@ -222,24 +250,6 @@ function throttle(delay, func, errFunc){
         }, delay);
     }
 }
-//移动div
-function moveDiv(id_1,id_2){ 
-    //参数传递的是你需要交换位置的两个div的ID
-    var insert = function(nodeInsert,nodeTo){
-        if(nodeInsert.insertAdjacentElement) {
-            nodeTo.insertAdjacentElement('beforeBegin',nodeInsert);
-        } else {
-            nodeTo.parentNode.insertBefore(nodeInsert,nodeTo);
-        }
-    }
-    var obj= document.createElement("a");
-    var t1 = document.getElementById(id_1);
-    var t2 = document.getElementById(id_2);
-    insert(obj,t2);
-    insert(t2,t1);
-    insert(t1,obj);
-    document.body.removeChild(obj);
-}
 //改变frame大小
 function changeShowAlbumFrameHeight(){
     document.getElementById("showalbumFrame").height=getClientHeight()-70;
@@ -248,6 +258,11 @@ function changeShowAlbumFrameHeight(){
 
 //改变页面
 function chengePage(id){
+    var lastPage = nowPage;
+    if(lastPage==4){
+        changeImageText();
+        changeAlbumName();
+    }
     nowPage = id;
     for(var i=0;i<pageDivList.length;i++){
         pageDivList[i][0].style.display = "none";
@@ -262,6 +277,11 @@ function chengePage(id){
         if (pageDivList[3][1]==0){
             getImage();
             pageDivList[3][1]=1;
+        }
+    } else if (id==4){
+        if (pageDivList[4][1]==0){
+            getImageText();
+            pageDivList[4][1]=1;
         }
     }
 }
@@ -393,8 +413,8 @@ function getImage(){    //获取图片
                 </div>-->
                 <div class="image-next">
                     <div></div>
-                    <img onclick="moveImage(${imageData.imageId}, ${imageData.imageOrder}, 'up')" class="image-next-left" src="../src/image/make-image-next.png">
-                    <img onclick="moveImage(${imageData.imageId}, ${imageData.imageOrder}, 'down')" class="image-next-right" src="../src/image/make-image-next.png">
+                    <img onclick="moveImage(${imageData.imageId}, ${imageData.imageOrder}, 'up', 'image')" class="image-next-left" src="../src/image/make-image-next.png">
+                    <img onclick="moveImage(${imageData.imageId}, ${imageData.imageOrder}, 'down', 'image')" class="image-next-right" src="../src/image/make-image-next.png">
                 </div>
             </div>
             `
@@ -510,7 +530,7 @@ function delImage(imageId) {    //删除图片
     xhr.send(fd);//发送请求！！！
 }
 let moveImageCanRun = true;
-function moveImage(imageId, imageOrder, action){
+function moveImage(imageId, imageOrder, action, from){
     if (!moveImageCanRun){
         //console.log("moveImage can not run")
         return;
@@ -540,10 +560,125 @@ function moveImage(imageId, imageOrder, action){
     xhr.onload = function (e) {
         //alert(e.currentTarget.responseText);
         //console.log("moveImage after")
-        getImage();
+        if (from=='image'){
+            getImage();
+        } else if (from=='write'){
+            getImageText();
+        }
+        
         //imageBox.insertBefore(nextObj,obj);
         //imageBox.children
         moveImageCanRun = true;
+    }
+
+    xhr.send(fd);//发送请求！！！
+}
+// 写文字
+function getImageText(){    //获取图片
+    document.getElementById("write-getInfo-loading").style.display="block";
+    //请求
+    let xhr = new XMLHttpRequest();
+    xhr.open("get", "../api/albummake.php?do=getImage&aid="+aid, true);
+    // 请求成功
+    xhr.onload = function (e) {
+        try {var data = JSON.parse(e.currentTarget.responseText);}//尝试读取json
+        catch(err) {alert(e.currentTarget.responseText);
+            document.getElementById("write-getInfo-loading").style.display="none";return;}
+        //console.log(data)
+        imageBox = document.getElementById("write-box");
+
+        if (data["data"]["length"]==0){
+            imageBox.innerHTML = `<div class="image-msg">${data["msg"]}</div>`;
+            document.getElementById("write-getInfo-loading").style.display="none";
+            return;
+        }
+        var dataList = data["data"]["dataList"];
+        imageBox.innerHTML = "";
+        for(var i=0;i<dataList.length;i++){
+            imageData = dataList[i];
+            imageMainHtml = `
+            <div class="write-item"  id="write-order-${imageData.imageOrder}">
+                <div class="write-bigpic" style="background-image:url(${imageData.imageUrl})"></div>
+                <textarea class="write-editwords" placeholder="点击这里给照片添加文字（限16字）" maxlength="16">${imageData.imageText}</textarea>
+                <div class="write-bigup" onclick="moveImage(${imageData.imageId}, ${imageData.imageOrder}, 'up', 'write')">
+                    <img src="/src/image/make-write-posup.png">
+                </div>
+                <div class="write-bigdown" onclick="moveImage(${imageData.imageId}, ${imageData.imageOrder}, 'down', 'write')">
+                    <img src="/src/image/make-write-posdown.png">
+                </div>
+            </div>
+            `
+            imageBox.innerHTML += imageMainHtml;
+        }
+        document.getElementById("write-getInfo-loading").style.display="none";
+    }
+    // 请求失败
+    xhr.onerror = function (e) {
+        document.getElementById("write-getInfo-loading").style.display="none";
+        //uploadMsg.innerHTML = "上传失败：" + e
+        alert("请求失败");
+    }
+    xhr.send();
+}
+function changeAlbumName(){
+    var albumnameBox = document.getElementById('write-albumname');
+    albumnameBox.value = albumnameBox.value.replace("\n"," ");
+    var newAlbumName = albumnameBox.value;
+    
+    if (newAlbumName==albumName){
+        return;
+    }
+    if (newAlbumName==''){
+        albumnameBox.value = albumName;
+        return;
+    }
+    //发送请求
+    // 用FormData传输
+    var fd = new FormData();
+    fd.append("aid", aid);
+    fd.append("newAlbumName", newAlbumName);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("post", "../api/albummake.php?do=changeAlbumName", true);
+    
+    //发生错误
+    xhr.onerror = function (e) {
+        alert("网络错误");
+    }
+    //请求成功 等返回结果
+    xhr.onload = function (e) {
+        //alert(e.currentTarget.responseText);
+        //getImage();
+    }
+
+    xhr.send(fd);//发送请求！！！
+}
+function changeImageText(){
+    var imageTextList = "";
+    photoTextObj = document.getElementsByClassName("write-editwords");
+    for (var i = 0; i < photoTextObj.length; i ++) {
+        if (photoTextObj.length-1 == i) {imageTextList += photoTextObj[i].value; continue;}
+        else{imageTextList += photoTextObj[i].value + '","';}
+    }
+    imageTextList = '["'+imageTextList+'"]';
+    //console.log(imageTextList)
+    //'["'+["1","1","123xzc","啊啊啊"].join('","')+'"]'
+    // 用FormData传输
+    var fd = new FormData();
+    fd.append("aid", aid);
+    fd.append("data", imageTextList);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("post", "../api/albummake.php?do=changeText", true);
+    
+    //发生错误
+    xhr.onerror = function (e) {
+        alert("网络错误");
+    }
+    //请求成功 等返回结果
+    xhr.onload = function (e) {
+        //alert(e.currentTarget.responseText);
+        getImageText();
     }
 
     xhr.send(fd);//发送请求！！！

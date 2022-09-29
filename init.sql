@@ -12,7 +12,7 @@ CREATE TABLE user (
 
 CREATE TABLE album (
   id int unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-  albumName char(20) NOT NULL COMMENT '名称',
+  albumName char(40) NOT NULL COMMENT '名称',
   albumIntroduce char(255) DEFAULT NULL COMMENT '简介',
   albumCreateDate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
   albumCover TEXT NOT NULL COMMENT'相册封面 (没有值为0)',
@@ -52,5 +52,7 @@ CREATE TABLE templates (
   templatFileUrl TEXT COMMENT '模板静态文件前置url',
   templatUpdateUserId int unsigned COMMENT '上传用户id',
   templatGroupId int unsigned COMMENT '模板分类id',
+  canWriteText tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否支持写文字',
+  canPlayMusic tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否支持放音乐',
   PRIMARY KEY (id)
 )CHARSET=utf8mb4;

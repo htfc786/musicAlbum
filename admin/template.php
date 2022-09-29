@@ -96,7 +96,8 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                         <td>静态文件存储方式</td>
                         <td>上传用户</td>
                         <td>分类</td>
-                        <td>是否支持音乐播放</td>
+                        <td>支持音乐</td>
+                        <td>支持文字</td>
                         <td>操作</td>
                     </tr>
                 </thead>
@@ -137,6 +138,17 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                     $templatGroupDB = mysqli_fetch_array($templatGroupDB);
                     $templatGroup=$templatGroupDB["groupName"];
                 }
+                //是否
+                $canWriteText = $userDataRow["canWriteText"];
+                $canPlayMusic = $userDataRow["canPlayMusic"];
+                $canWriteTextHtml = "X";
+                $canPlayMusicHtml = "X";
+                if($canWriteText){
+                    $canWriteTextHtml = "√";
+                }
+                if($canPlayMusic){
+                    $canPlayMusicHtml = "√";
+                }
                 
                 echo <<<END
                 <tr>
@@ -148,7 +160,8 @@ $templatesData = mysqli_query($db,"select * from templates limit $startRow,$admi
                     <td>$templatFileModeHtml</td>
                     <td>UID$templatUpdateUserId</td>
                     <td>$templatGroup</td>
-                    <td style="font-size: x-large;">√</td>
+                    <td style="font-size: x-large;">$canPlayMusicHtml</td>
+                    <td style="font-size: x-large;">$canWriteTextHtml</td>
                     <td>
                         <a href="">编辑</a> |
                         <a href="javascript:void(0);" onclick="delTemplate('$templatesId')">删除</a>

@@ -232,6 +232,19 @@ switch ($_GET["do"])
         $htmlSaveFileUrl = "/templates/html/$templateId.$htmlFileFormat";
         $htmlSaveFilePath = "../.." . $htmlSaveFileUrl;
         move_uploaded_file($_FILES["templateHtml"]["tmp_name"], $htmlSaveFilePath);  //复制
+        //读取文件
+        $templateHtml = file_get_contents($htmlSaveFilePath); //读文件
+        //查找格式
+        //{{ musicUrl }} {{ textArray }}
+        $canWriteText = 0;
+        $canPlayMusic = 0;
+        if(strstr($templateHtml,"{{ musicUrl }}")){
+            $canPlayMusic = 1;
+        }
+        if(strstr($templateHtml,"{{ textArray }}")){
+            $canWriteText = 1;
+        }
+        
         // $htmlSaveFileUrl
 
         //文件保存模式
@@ -287,7 +300,7 @@ switch ($_GET["do"])
         //$templateGroupId
         //echo "UPDATE templates SET templatIMG = '$coverSaveFileUrl', templatHtmlPath = '$htmlSaveFileUrl', templatFileMode = '$templateFileMode', templatFileUrl = '$srcSaveFileUrl', templatUpdateUserId = $userid, templatGroupId = $templateGroupId WHERE id = $templateId;";
         //插入数据库
-        $UPDATEOk = mysqli_query($db,"UPDATE templates SET templatIMG = '$coverSaveFileUrl', templatHtmlPath = '$htmlSaveFileUrl', templatFileMode = '$templateFileMode', templatFileUrl = '$srcSaveFileUrl', templatUpdateUserId = '$userid', templatGroupId = '$templateGroupId' WHERE id = $templateId;");  
+        $UPDATEOk = mysqli_query($db,"UPDATE templates SET templatIMG = '$coverSaveFileUrl', templatHtmlPath = '$htmlSaveFileUrl', templatFileMode = '$templateFileMode', templatFileUrl = '$srcSaveFileUrl', templatUpdateUserId = '$userid', templatGroupId = '$templateGroupId', canWriteText = '$canWriteText', canPlayMusic = '$canPlayMusic' WHERE id = $templateId;");  
         if (!$UPDATEOk){
             echo "模板添加失败";
             return;

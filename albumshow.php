@@ -90,14 +90,23 @@ $templateHtml = file_get_contents(".".$templatHtmlPath); //读文件
 //静态文件 staticFile
 $webHtml = str_replace("{{ staticFile }}",$PrePathNo.$templatFileUrl,$templateHtml);
 //title
-$webHtml = str_replace("{{ title }}",$albumData["albumName"],$webHtml);
+$albumName = $albumData["albumName"];
+
+$albumName = str_replace("\n"," ",$albumName);
+$albumName = str_replace("\r"," ",$albumName);
+$albumName = str_replace("\r\n"," ",$albumName);
+//echo $albumName;
+
+$webHtml = str_replace("{{ title }}",$albumName,$webHtml);
 //imgList
 //$imgListQuery = mysqli_query($db,"select photoOrder,photoUrl from photos where albumId = $aid");  //执行sql！！！
 //排序版本sql查询 SELECT * FROM photos WHERE albumId = 1 ORDER BY photos.photoOrder ASC
 $imgListQuery = mysqli_query($db," SELECT id,photoOrder,photoUrl,photoText FROM photos WHERE albumId = $aid ORDER BY photos.photoOrder ASC");
 $imgList = "";
+$textArry = Array();
 if (mysqli_num_rows($imgListQuery) == 0){//获取有多少个
 	$imgList = "\"\"";
+	$textArry = Array();
 } else {
 	$imageLen = mysqli_num_rows($imgListQuery);  //数据多少
     $imageData = arrayLen($imageLen);
@@ -109,18 +118,37 @@ if (mysqli_num_rows($imgListQuery) == 0){//获取有多少个
 		//放入总数组
         // https://www.php.cn/php-weizijiaocheng-98895.html
 		array_splice($imageData, $photoOrder, 1, array($photoUrl));
+		//在这里顺便搞一下文字的事
+		$photoSaveName = explode("/",$photoUrl);
+		$photoSaveName = end($photoSaveName);
+ 		$photoText = $imageRow['photoText'];
+
+		if ($photoText != ""){
+			//array_splice($textArry, $photoOrder, 1, array($photoSaveName => $photoText));
+			$textArry[$photoSaveName] = $photoText;
+			//print_r(1);
+		}
+
 	}
 	for($i=0,$n=count($imageData);$i<$n;$i++){
 		$photoUrl = $imageData[$i];
 		$imgList = $imgList."\"".$PrePathNo.$photoUrl."\",";
 	}
+	//print_r($textArry);
 	/*
 	while ($row=mysqli_fetch_assoc($imgListQuery)){//$row=mysqli_fetch_assoc($rs)){
 		$imgList = $imgList."\"".$PrePathNo.$row["photoUrl"]."\",";
 	}*/
 }
 $webHtml = str_replace("{{ imgList }}",$imgList,$webHtml);
+//文字 
+// {{ textArray }}
+$textArryStr = json_encode($textArry);
+$webHtml = str_replace("{{ textArray }}",$textArryStr,$webHtml);
+
 //music (暂时没有)
+// {{ musicUrl }}
+$canPlayMusic = $templateData["canPlayMusic"];
 
 //输出
 echo $webHtml;
