@@ -1,20 +1,4 @@
 <?php
-function get_path(){	//获取请求php文件后面写的东西
-    $php_self_name = basename(__FILE__);//php脚本名称
-    $meet_php = 0;//False;//是否遇见这个php脚本名称
-    $last_path = "";//请求php文件后面写的东西
-    $urls = explode("/",$_SERVER['PHP_SELF']);//用“/”分割字符串
-    foreach ($urls as $i){
-        //echo $i."/";
-        if ($meet_php) {	//遇见这个php脚本名称之后添加今路径变量里
-            $last_path = $last_path."/".$i;
-        }
-        if ($i == $php_self_name){//如果遇见这个php脚本名称标记一下
-            $meet_php = 1;//True;
-        }
-    }
-    return $last_path;
-}
 //文件类型转MIME格式
 function fileType2MIME($file_type){
     switch($file_type){
@@ -62,7 +46,6 @@ function fileType2MIME($file_type){
         case "dv": return "video/x-dv";
         case "webm": return "video/webm";
         //其他
-        case "": return "";
         case "pdf": return "application/pdf";
         case "xml": return "application/xml";
         case "swf": return "application/x-shockwave-flash";
@@ -74,10 +57,58 @@ function fileType2MIME($file_type){
     }
 }
 
-$confIniArray = parse_ini_file("./conf.ini", true); //配置文件
-$imgSavePaths = $confIniArray["imgSavePaths"];   //获取图片存储文件夹路径
+function getMode(){	//获取模式
+    $php_self_name = basename(__FILE__);//php脚本名称
+    $urls = explode("/",$_SERVER['PHP_SELF']);//用“/”分割字符串
+    $num = count($urls);
+    for($i=0;$i<$num;++$i){
+        if ($urls[$i] == $php_self_name && isset($urls[$i+1])){
+            return $urls[$i+1];
+        }
+    }
+    return "";
+}
 
-$file_path = $imgSavePaths . get_path();
+function getFile(){	//获取请求php文件后面写的东西
+    $meet_php = 0;//False;//是否遇见这个php脚本名称
+    $last_path = "";//请求php文件后面写的东西
+    $urls = explode("/",$_SERVER['PHP_SELF']);//用“/”分割字符串
+    foreach ($urls as $i){
+        //echo $i."/";
+        if ($meet_php) {	//遇见这个php脚本名称之后添加今路径变量里
+            return $i;
+        }
+        if ($i=="image"||$i=="music"){//如果遇见这个php脚本名称标记一下
+            $meet_php = 1;//True;
+        }
+    }
+    return "";
+}
+
+//模式
+$confIniArray = parse_ini_file("./conf.ini", true); //配置文件
+
+$mode = getMode();
+if ($mode = "image") {//获取图片存储文件夹路径
+    $fileSavePaths = $confIniArray["imgSavePaths"]; 
+} else if ($mode = "image") {
+    $fileSavePaths = $confIniArray["musicSavePaths"]; 
+}
+
+//文件路径
+$fileName = getFile();
+
+$fileDate = substr($fileName, 0, 8);
+$fileYear = substr($fileName, 0, 4);
+$fileMon = substr($fileName, 4, 2);
+$fileDay = substr($fileName, 6, 2);
+
+$filePath = "/".$fileYear."/".$fileMon."/".$fileDay."/".$fileName;
+
+$fileMIME = fileType2MIME(pathinfo($fileName, PATHINFO_EXTENSION));
+
+$file_path = $fileSavePaths . $filePath;
+
 //echo $file_path;
 //1.打开文件
 if(!is_file($file_path)){
@@ -93,7 +124,6 @@ if($file_size>50*1024*1024){ //最大50m
     return ;
 }
 //返回的文件
-$fileMIME = fileType2MIME(pathinfo($file_path, PATHINFO_EXTENSION));
 header("Content-type: $fileMIME");
 //按照字节大小返回
 header("Accept-Ranges: bytes");
