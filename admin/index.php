@@ -48,7 +48,7 @@ $username = $_SESSION['username'];  //用户名
                 <li><a href="user.php" target="main">用户管理</a></li>
                 <li><a href=".html" target="main">相册管理</a></li>
                 <li><a href="template.php" target="main">模板管理</a></li>
-                <li><a href=".html" target="main">音乐管理</a></li>
+                <li><a href="music.php" target="main">音乐管理</a></li>
                 <li><a href=".html" target="main">系统设置</a></li>
             </ul>
         </nav>

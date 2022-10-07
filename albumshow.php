@@ -54,7 +54,7 @@ $db = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbDatabase,$dbPort);
 mysqli_query($db,"set names '$dbEncoding'"); //设定字符集
 
 //查询相册信息
-$albumDataQuery = mysqli_query($db,"select albumName,albumTemplateId from album where id = $aid");  
+$albumDataQuery = mysqli_query($db,"select albumName,albumTemplateId,albumMusicId,albumMusicUrl from album where id = $aid");  
 if(!(mysqli_num_rows($albumDataQuery)==1)){  //获取有多少个（正常应该有只一个）
     echo "没有此相册";
     return;
@@ -148,7 +148,16 @@ $webHtml = str_replace("{{ textArray }}",$textArryStr,$webHtml);
 
 //music (暂时没有)
 // {{ musicUrl }}
-$canPlayMusic = $templateData["canPlayMusic"];
+//$canPlayMusic = $templateData["canPlayMusic"];
+//$albumData["albumMusicId"];
+//$albumData["albumMusicUrl"];
+if ($albumData["albumMusicId"]!==0) {
+	$albumMusicUrl = $albumData["albumMusicUrl"];
+	$webHtml = str_replace("{{ musicUrl }}",$albumMusicUrl,$webHtml);
+} else {
+	$webHtml = str_replace("{{ musicUrl }}","",$webHtml);
+}
+
 
 //输出
 echo $webHtml;

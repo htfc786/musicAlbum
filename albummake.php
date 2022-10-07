@@ -123,24 +123,37 @@ $canPlayMusic = $templateDataData["canPlayMusic"];
     </div>
     <div id="music" style="display: none;">
         <div id="music-header">
-            <div id="music-search-btn" onclick="search_musicshow()">搜索</div>
+            <div id="music-search-btn" onclick="searchMusic()">搜索</div>
             <div class="music-close" onclick="chengePage(0)">返回</div>
             <div id="music-menu">
-                <div class="music-menu-btnon" onclick="">热门</div>
-                <div class="music-menu-btn" onclick="">节日</div>
-                <div class="music-menu-btn" onclick="">榜单</div>
+                <div class="music-menu-btn" id="music-menu-search" onclick="searchMusic()" style="display:none;">搜索结果</div>
+                <div class="music-menu-btn music-menu-btnon" onclick="getMusicGroup('all',this)">全部</div>
+                <?php
+                $musicGroupQuery = mysqli_query($db,"SELECT id,groupName FROM musicgroup");
+                while ($musicGroupRow=mysqli_fetch_assoc($musicGroupQuery)){//$row=mysqli_fetch_assoc($rs)){
+                    $groupId = $musicGroupRow["id"];
+                    $groupName = $musicGroupRow["groupName"];
+                    echo "<div class=\"music-menu-btn\" onclick=\"getMusicGroup('$groupId',this)\">$groupName</div>";
+                }
+                ?>
             </div>
+        </div>
+        
+        <?php if(!$canPlayMusic){   //如果不支持音乐
+            echo '<div style="margin: 8px; color: #f00; font-size: 20px; margin-top: 60px;">提示：对不起，当前相册使用的模板可能不支持播放音乐</div>';
+            echo '<style>.music-list.music-list { margin-top: 0; }</style>';
+        } ?>
+
+        <div class="music-list" id="music-list">
+
         </div>
 
-        <div class="music-list">
-            <div class="music-item">
-                <div class="music-item-img">
-                    <img src="https://s2.kagirl.cn/template/new/yinfu1.png">
-                </div>
-                <div class="music-item-title" onclick="">boot</div>
-                <div class="music-item-ok" onclick="">确定</div>
-            </div>
+        <div id="music-getInfo-loading" style="display:none;">
+            <div id="music-getInfo-loading-background"></div>
+            <img id="music-getInfo-loading-image" src="/src/image/make-image-loading.png">
+            <span id="music-getInfo-loading-text">加载中</span>
         </div>
+        <audio src="" id="musicPlayer" style="display:none;"></audio>
     </div>
     <div id="image" style="display: none;">
         <div id="image-header">
@@ -178,7 +191,7 @@ $canPlayMusic = $templateDataData["canPlayMusic"];
         <div class="write-tip"></div>
 
         <?php if(!$canWriteText){   //如果不支持文字
-            echo '<div style="margin: 8px; color: #f00; font-size: 20px;">提示：对不起，当前相册使用的模板不支持显示您写的文字</div>';
+            echo '<div style="margin: 8px; color: #f00; font-size: 20px;">提示：对不起，当前相册使用的模板可能不支持显示文字</div>';
         } ?>
         
         <div id="write-box">
@@ -206,7 +219,7 @@ var albumName = "<?php echo $albumName; ?>"
 let pageDivList = [];
 pageDivList.push([document.getElementById("main")]); 
 pageDivList.push([document.getElementById("template"),0,0]);//操作的对象，当前分类，当前页面
-pageDivList.push([document.getElementById("music")]);
+pageDivList.push([document.getElementById("music"),0,0]);
 pageDivList.push([document.getElementById("image"),0]);//操作的对象,是否需要重新加载
 pageDivList.push([document.getElementById("write"),0]);
 
@@ -271,8 +284,11 @@ function chengePage(id){
     window.onscroll()
     if (id==0){
         document.getElementById("showalbumFrame").contentWindow.location.reload(true);
+        document.getElementById("musicPlayer").pause();
     } else if (id==1){
         getTemplateGroup("all",0);
+    } else if (id==2){
+        getMusicGroup("all",0);
     } else if (id==3) {
         if (pageDivList[3][1]==0){
             getImage();
@@ -378,7 +394,152 @@ function changeTemplate(templateId){
 
     xhr.send(fd);//发送请求！！！
 }
+// 音乐
+function getMusicGroup(groupId,btnObj){
+    document.getElementById("music-getInfo-loading").style.display="block";
+    //console.log("调用了 getTemplateGroup");
+    document.getElementById("music-menu-search").style.display = "none";
+    //改横线的位置
+    musicMenuBtn = document.getElementsByClassName("music-menu-btn");
+    for(var i=0;i<musicMenuBtn.length;i++){
+        musicMenuBtn[i].className = "music-menu-btn";
+    }
+    if (btnObj==0){
+        document.getElementsByClassName("music-menu-btn")[0].className = "music-menu-btn music-menu-btnon";
+    } else {
+        btnObj.className = "music-menu-btn music-menu-btnon";
+    }
+    if(pageDivList[1][1] == groupId) {
+        document.getElementById("music-getInfo-loading").style.display="none";
+        //return;
+    }
+    pageDivList[1][1] = groupId;
+    //console.log('2')
+    //请求
+    let xhr = new XMLHttpRequest();
+    xhr.open("get", "../api/albummake.php?do=getMusic&groupId="+groupId, true);
+    // 请求成功
+    xhr.onload = function (e) {
+        try {var data = JSON.parse(e.currentTarget.responseText);}
+        catch(err) {alert(e.currentTarget.responseText);return;}
+        //console.log(data)
+        if (data["data"]["length"]==0){
+            alert(data["msg"]);
+            return;
+        }
+        var dataList = data["data"]["dataList"];
+        musicList = document.getElementById("music-list");
+        musicList.innerHTML = "";
+        for(var i=0;i<dataList.length;i++){
+            musicData = dataList[i];
+            musicMainHtml = `
+            <div class="music-item" onclick="musicPlayer('${musicData.musicFileUrl}')">
+                <div class="music-item-img">
+                    <img src="/src/image/make-music-yinfu.png">
+                </div>
+                <div class="music-item-title">${musicData.musicName}${musicData.musicComposer ? ' - ' + musicData.musicComposer : ''}</div>
+                <div class="music-item-ok" onclick="changeMusic(${musicData.musicId});">选择</div>
+            </div>
+            `
+            musicList.innerHTML += musicMainHtml;
+        }
+        document.getElementById("music-getInfo-loading").style.display="none";
+    }
+    // 请求失败
+    xhr.onerror = function (e) {
+        //uploadMsg.innerHTML = "上传失败：" + e
+        alert("请求失败");
+        document.getElementById("music-getInfo-loading").style.display="none";
+    }
+    xhr.send();
+}
+function changeMusic(musicId){
+    // 用FormData传输
+    var fd = new FormData();
 
+    fd.append("aid",aid);
+    fd.append("musicId",musicId);
+
+    //发送请求
+    let xhr = new XMLHttpRequest();
+    xhr.open("post", "../api/albummake.php?do=changeMusic", true);
+    
+    //发生错误
+    xhr.onerror = function (e) {
+        alert("请求发生错误");
+    }
+    //请求成功 等返回结果
+    xhr.onload = function (e) {
+        alert(e.currentTarget.responseText);
+        if (e.currentTarget.responseText=="更改成功"){
+            document.getElementById("showalbumFrame").contentWindow.location.reload(true);
+            chengePage(0);
+        }
+    }
+
+    xhr.send(fd);//发送请求！！！
+}
+function searchMusic(){
+    var searchText = prompt("请输入您想查找的歌曲名称");
+    if(!searchText){
+        return;
+    }
+    document.getElementById("music-getInfo-loading").style.display="block";
+    //请求
+    let xhr = new XMLHttpRequest();
+    xhr.open("get", "../api/albummake.php?do=searchMusic&searchText="+searchText, true);
+    // 请求成功
+    xhr.onload = function (e) {
+        try {var data = JSON.parse(e.currentTarget.responseText);}
+        catch(err) {alert(e.currentTarget.responseText);
+            document.getElementById("music-getInfo-loading").style.display="none";return;}
+        //标签
+        musicMenuBtn = document.getElementsByClassName("music-menu-btn")
+        for(var i=0;i<musicMenuBtn.length;i++){
+            musicMenuBtn[i].className = "music-menu-btn";
+        }
+        var musicSearchMenu = document.getElementById("music-menu-search");
+        musicSearchMenu.className = "music-menu-btn music-menu-btnon";
+        musicSearchMenu.style.display = "inline-block";
+        pageDivList[1][1] = "search";
+        //console.log(data)
+        if (data["data"]["length"]==0){
+            document.getElementById("music-getInfo-loading").style.display="none";
+            document.getElementById("music-menu-search").style.display = "none";
+            alert(data["msg"]);
+            return;
+        }
+        var dataList = data["data"]["dataList"];
+        musicList = document.getElementById("music-list");
+        musicList.innerHTML = "";
+        for(var i=0;i<dataList.length;i++){
+            musicData = dataList[i];
+            musicMainHtml = `
+            <div class="music-item" onclick="musicPlayer('${musicData.musicFileUrl}')">
+                <div class="music-item-img">
+                    <img src="/src/image/make-music-yinfu.png">
+                </div>
+                <div class="music-item-title">${musicData.musicName}${musicData.musicComposer ? ' - ' + musicData.musicComposer : ''}</div>
+                <div class="music-item-ok" onclick="changeMusic(${musicData.musicId});">选择</div>
+            </div>
+            `
+            musicList.innerHTML += musicMainHtml;
+        }
+        document.getElementById("music-getInfo-loading").style.display="none";
+    }
+    // 请求失败
+    xhr.onerror = function (e) {
+        //uploadMsg.innerHTML = "上传失败：" + e
+        alert("请求失败");
+        document.getElementById("music-getInfo-loading").style.display="none";
+    }
+    xhr.send();
+}
+function musicPlayer(musicUrl){
+    var musicPlayerHtml = document.getElementById("musicPlayer");
+    musicPlayerHtml.src = musicUrl;
+    musicPlayerHtml.play();
+}
 // 图片
 function getImage(){    //获取图片
     document.getElementById("image-getInfo-loading").style.display="block";

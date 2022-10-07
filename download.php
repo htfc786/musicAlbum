@@ -89,10 +89,13 @@ function getFile(){	//获取请求php文件后面写的东西
 $confIniArray = parse_ini_file("./conf.ini", true); //配置文件
 
 $mode = getMode();
-if ($mode = "image") {//获取图片存储文件夹路径
+//echo $mode;
+if ($mode == "image") {//获取图片存储文件夹路径
     $fileSavePaths = $confIniArray["imgSavePaths"]; 
-} else if ($mode = "image") {
+} else if ($mode == "music") {
     $fileSavePaths = $confIniArray["musicSavePaths"]; 
+} else {
+    return;
 }
 
 //文件路径
@@ -110,6 +113,7 @@ $fileMIME = fileType2MIME(pathinfo($fileName, PATHINFO_EXTENSION));
 $file_path = $fileSavePaths . $filePath;
 
 //echo $file_path;
+//echo $fileSavePaths;
 //1.打开文件
 if(!is_file($file_path)){
     echo "文件不存在!";

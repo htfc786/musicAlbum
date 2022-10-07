@@ -144,6 +144,37 @@ switch ($_GET["do"]) {
         }
         break;
 
+    //音乐
+    //获取音乐
+    case "getMusic": 
+        //groupId
+        if(!(isset($_GET["groupId"]) && $_GET["groupId"])){
+            echo "缺少请求参数";
+            return;
+        }
+        break;
+    //改音乐
+    case "changeMusic":
+        if ($_SERVER['REQUEST_METHOD'] != 'POST'){
+            echo "请求方式错误";
+            return;
+        }
+        if(!(isset($_POST["aid"]) && $_POST["aid"])){
+            echo "缺少请求参数";
+            return;
+        }
+        if(!(isset($_POST["musicId"]) && $_POST["musicId"])){
+            echo "缺少请求参数";
+            return;
+        }
+        break;
+    //搜索音乐
+    case "searchMusic": 
+        if(!(isset($_GET["searchText"]) && $_GET["searchText"])){
+            echo "缺少请求参数";
+            return;
+        }
+        break;
     //照片
     //获取图片api
     case "getImage":
@@ -329,12 +360,14 @@ switch ($_GET["do"]) {
     //模板
     //获取模板
     case "getTemplate": 
+        //判断分组
         if ($_GET["groupId"]=="all"){
             $templatesGroupQuery = mysqli_query($db,"SELECT id,templatName,templatIMG,templatGroupId FROM templates");
         } else {
             $groupId = $_GET["groupId"];
             $templatesGroupQuery = mysqli_query($db,"SELECT id,templatName,templatIMG,templatGroupId FROM templates WHERE templatGroupId = $groupId");
         }
+
         //没有模板
         if(!mysqli_num_rows($templatesGroupQuery)){
             //生成返回的数组
@@ -349,6 +382,7 @@ switch ($_GET["do"]) {
             echo json_encode($returnTemplatesData);
             break;
         }
+
         $templatesData = array();
         $templatesLen = 0;  //数据多少
         while ($templatesGroupRow=mysqli_fetch_assoc($templatesGroupQuery)){//$row=mysqli_fetch_assoc($rs)){
@@ -412,6 +446,170 @@ switch ($_GET["do"]) {
         echo "更改成功";
         break;
     
+    //音乐
+    //获取音乐、
+    case "getMusic": 
+        //判断分组
+        if ($_GET["groupId"]=="all"){
+            $musicQuery = mysqli_query($db,"SELECT id,musicName,musicComposer,musicFileUrl,musicGroupId FROM music");
+        } else {
+            $groupId = $_GET["groupId"];
+            $musicQuery = mysqli_query($db,"SELECT id,musicName,musicComposer,musicFileUrl,musicGroupId FROM music WHERE musicGroupId = $groupId");
+        }
+
+        //没有
+        if(!mysqli_num_rows($musicQuery)){
+            //生成返回的数组
+            $returnMusicData = array(
+                "code" => 200,
+                "msg" => "没有任何数据",
+                "data" => array(
+                    "length" => 0,
+                    "dataList" => array()
+                )
+            );
+            echo json_encode($returnMusicData);
+            break;
+        }
+        //echo mysqli_num_rows($musicQuery);
+        $musicData = array();
+        $musicLen = 0;  //数据多少
+        //while ($musicRow=mysqli_fetch_assoc($musicQuery)){echo "1";}
+        while ($musicRow=mysqli_fetch_assoc($musicQuery)){//$row=mysqli_fetch_assoc($rs)){
+            
+            $musicLen++;//增加数据
+            //查出的数据
+            $musicId = $musicRow["id"];
+            $musicName = $musicRow["musicName"];
+            $musicComposer = $musicRow["musicComposer"];
+            $musicFileUrl = $musicRow["musicFileUrl"];
+            $musicGroupId = $musicRow["musicGroupId"];
+            //查询分类
+            $musicGroupQuery = mysqli_query($db,"SELECT groupName FROM musicgroup WHERE id = $musicGroupId");
+            if(!mysqli_num_rows($musicGroupQuery)==1) {
+                $musicGroup = "无";
+            } else {
+                $musicGroup = mysqli_fetch_array($musicGroupQuery)["groupName"];
+            }
+            //生成数组
+            $musicDataArr=array(
+                "musicId" => $musicId,
+                "musicName" => $musicName,
+                "musicComposer" => $musicComposer,
+                "musicFileUrl" => $musicFileUrl,
+                "musicGroup" => $musicGroup,
+            );
+            //放入总数组
+            array_unshift($musicData,$musicDataArr);
+            //print_r($musicData);
+        }
+        //生成返回的数组
+        $returnMusicData = array(
+            "code" => 200,
+            "msg" => "查询成功！",
+            "data" => array(
+                "length" => $musicLen,
+                "dataList" => $musicData
+            )
+        );
+        echo json_encode($returnMusicData);
+
+        break;
+    //改音乐
+    case "changeMusic":
+        $aid = $_POST["aid"];
+        $musicId = $_POST["musicId"];
+        //有这相册吗？
+        $albumQuery = mysqli_query($db,"SELECT albumMreatorId FROM album WHERE id = $aid");
+        if(!mysqli_num_rows($albumQuery)==1) {  
+            echo "没这相册！";
+            return;
+        }
+        //是相册的作者吗？
+        $albumMreatorId = mysqli_fetch_array($albumQuery)["albumMreatorId"];
+        if($albumMreatorId!=$userid){
+            echo "您不是此相册的作者！！！";
+            return;
+        }
+        //查询音乐URL
+        $musicQuery = mysqli_query($db,"SELECT musicFileUrl FROM music WHERE id = $musicId");
+        if(!mysqli_num_rows($musicQuery)==1) {  
+            echo "没这音乐！";
+            return;
+        }
+        $musicQueryRow = mysqli_fetch_array($musicQuery);
+        $musicFileUrl = $musicQueryRow["musicFileUrl"];
+        //更改数据库
+        //echo "UPDATE album SET albumMusicId = $musicId, albumMusicUrl = '$musicFileUrl' WHERE id = $aid";
+        $changeOk = mysqli_query($db,"UPDATE album SET albumMusicId = $musicId, albumMusicUrl = '$musicFileUrl' WHERE id = $aid;");
+        if (!$changeOk){
+            echo "对不起，系统正忙";
+            return;
+        }
+        echo "更改成功";
+        break;
+    //搜索音乐
+    case "searchMusic": 
+        $searchText = $_GET["searchText"];
+        //搜索
+        $musicQuery = mysqli_query($db,"SELECT id,musicName,musicComposer,musicFileUrl,musicGroupId FROM music WHERE musicName like '$searchText'");
+        //没有
+        if(!mysqli_num_rows($musicQuery)){
+            //生成返回的数组
+            $returnMusicData = array(
+                "code" => 200,
+                "msg" => "没有搜索到音乐",
+                "data" => array(
+                    "length" => 0,
+                    "dataList" => array()
+                )
+            );
+            echo json_encode($returnMusicData);
+            break;
+        }
+        //echo mysqli_num_rows($musicQuery);
+        $musicData = array();
+        $musicLen = 0;  //数据多少
+        //while ($musicRow=mysqli_fetch_assoc($musicQuery)){echo "1";}
+        while ($musicRow=mysqli_fetch_assoc($musicQuery)){//$row=mysqli_fetch_assoc($rs)){
+            
+            $musicLen++;//增加数据
+            //查出的数据
+            $musicId = $musicRow["id"];
+            $musicName = $musicRow["musicName"];
+            $musicComposer = $musicRow["musicComposer"];
+            $musicFileUrl = $musicRow["musicFileUrl"];
+            $musicGroupId = $musicRow["musicGroupId"];
+            //查询分类
+            $musicGroupQuery = mysqli_query($db,"SELECT groupName FROM musicgroup WHERE id = $musicGroupId");
+            if(!mysqli_num_rows($musicGroupQuery)==1) {
+                $musicGroup = "无";
+            } else {
+                $musicGroup = mysqli_fetch_array($musicGroupQuery)["groupName"];
+            }
+            //生成数组
+            $musicDataArr=array(
+                "musicId" => $musicId,
+                "musicName" => $musicName,
+                "musicComposer" => $musicComposer,
+                "musicFileUrl" => $musicFileUrl,
+                "musicGroup" => $musicGroup,
+            );
+            //放入总数组
+            array_unshift($musicData,$musicDataArr);
+            //print_r($musicData);
+        }
+        //生成返回的数组
+        $returnMusicData = array(
+            "code" => 200,
+            "msg" => "搜索成功！",
+            "data" => array(
+                "length" => $musicLen,
+                "dataList" => $musicData
+            )
+        );
+        echo json_encode($returnMusicData);
+        break;
     //照片
     //获取图片api
     case "getImage":
@@ -537,7 +735,7 @@ switch ($_GET["do"]) {
             move_uploaded_file($files[$i]["tmp_name"], $imgSavePaths . $savename);
             
             $photoPath = $imgSavePathsLast.$savename;
-            $photoUrl = "/download.php".$photoPath;
+            $photoUrl = "/download.php/image/".$savename;
             //header('refresh:1; url=/test.php');
             //在图片表添加
             //photoOrder计算
