@@ -69,21 +69,32 @@ if($userid!=$albumMreatorId){//不是主人
 
 $albumName = $albumData["albumName"];
 
+$canWriteText = 0;
+$canPlayMusic = 0;
+
 $albumTemplateId = $albumData["albumTemplateId"];
-$templateDataQuery = mysqli_query($db,"SELECT canWriteText,canPlayMusic FROM templates WHERE id = $albumTemplateId");
-$templateDataData = mysqli_fetch_array($templateDataQuery);
-//canWriteText canPlayMusic
-$canWriteText = $templateDataData["canWriteText"];
-$canPlayMusic = $templateDataData["canPlayMusic"];
+
+if ($albumTemplateId != 0){
+	$templateDataQuery = mysqli_query($db,"SELECT canWriteText,canPlayMusic FROM templates WHERE id = $albumTemplateId");
+	$templateDataData = mysqli_fetch_array($templateDataQuery);
+	//canWriteText canPlayMusic
+	$canWriteText = $templateDataData["canWriteText"];
+	$canPlayMusic = $templateDataData["canPlayMusic"];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=500, initial-scale=1.0">
+    <meta name="viewport" content="width=500, initial-scale=1.0 ">
+	<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
     <title>制作相册</title>
     <link rel="stylesheet" href="../src/css/main-albummake.css">
+	<script>
+	var vConsole = new window.VConsole();
+	console.log("helloworld")
+	</script>
 </head>
 <body>
     <div id="main">

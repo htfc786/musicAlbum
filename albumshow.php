@@ -101,11 +101,11 @@ $webHtml = str_replace("{{ title }}",$albumName,$webHtml);
 //imgList
 //$imgListQuery = mysqli_query($db,"select photoOrder,photoUrl from photos where albumId = $aid");  //执行sql！！！
 //排序版本sql查询 SELECT * FROM photos WHERE albumId = 1 ORDER BY photos.photoOrder ASC
-$imgListQuery = mysqli_query($db," SELECT id,photoOrder,photoUrl,photoText FROM photos WHERE albumId = $aid ORDER BY photos.photoOrder ASC");
+$imgListQuery = mysqli_query($db," SELECT id,photoOrder,photoUrl,photoIntroduce FROM photos WHERE albumId = $aid ORDER BY photos.photoOrder ASC");
 $imgList = "";
 $textArry = Array();
 if (mysqli_num_rows($imgListQuery) == 0){//获取有多少个
-	$imgList = "\"\"";
+	$imgList = "";
 	$textArry = Array();
 } else {
 	$imageLen = mysqli_num_rows($imgListQuery);  //数据多少
@@ -121,7 +121,7 @@ if (mysqli_num_rows($imgListQuery) == 0){//获取有多少个
 		//在这里顺便搞一下文字的事
 		$photoSaveName = explode("/",$photoUrl);
 		$photoSaveName = end($photoSaveName);
- 		$photoText = $imageRow['photoText'];
+ 		$photoText = $imageRow['photoIntroduce'];
 
 		if ($photoText != ""){
 			//array_splice($textArry, $photoOrder, 1, array($photoSaveName => $photoText));

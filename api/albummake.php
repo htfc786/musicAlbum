@@ -615,9 +615,9 @@ switch ($_GET["do"]) {
     case "getImage":
         $aid = $_GET["aid"];
         //数据库查询图片
-        //$imagesQuery = mysqli_query($db," select id,photoOrder,photoUrl,photoText from photos where albumId = $aid");
+        //$imagesQuery = mysqli_query($db," select id,photoOrder,photoUrl,photoIntroduce from photos where albumId = $aid");
         //排序版本sql查询 SELECT * FROM photos WHERE albumId = 1 ORDER BY photos.photoOrder ASC
-        $imagesQuery = mysqli_query($db," SELECT id,photoOrder,photoUrl,photoText FROM photos WHERE albumId = $aid ORDER BY photos.photoOrder ASC");
+        $imagesQuery = mysqli_query($db," SELECT id,photoOrder,photoUrl,photoIntroduce FROM photos WHERE albumId = $aid ORDER BY photos.photoOrder ASC");
         //没有模板
         if(!mysqli_num_rows($imagesQuery)){
             //生成返回的数组
@@ -641,17 +641,17 @@ switch ($_GET["do"]) {
             $photoUrl = $imageRow['photoUrl'];
             $photoId = $imageRow['id'];
             $photoOrder = $imageRow['photoOrder'];
-            $photoText = $imageRow['photoText'];
+            $photoIntroduce = $imageRow['photoIntroduce'];
             //
-            if (!$photoText){
-                $photoText = "";
+            if (!$photoIntroduce){
+                $photoIntroduce = "";
             }
             //生成数组
             $imageDataArr=array(
                 "imageId" => $photoId,
                 "imageOrder" => $photoOrder,
                 "imageUrl" => $photoUrl,
-                "imageText" => $photoText,
+                "imageText" => $photoIntroduce,
             );
             //放入总数组
             // https://www.php.cn/php-weizijiaocheng-98895.html
@@ -891,7 +891,7 @@ switch ($_GET["do"]) {
         }
         //<--
         //获取图片张数
-        $albumPhotoQuery = mysqli_query($db," SELECT photoText FROM photos WHERE albumId = $aid");
+        $albumPhotoQuery = mysqli_query($db," SELECT photoIntroduce FROM photos WHERE albumId = $aid");
         //$albumPhotoNum = mysqli_fetch_assoc($albumPhotoQuery)["count(*)"];  //获取有多少个
         $albumPhotoNum = mysqli_num_rows($albumPhotoQuery);
         //便利
@@ -901,17 +901,17 @@ switch ($_GET["do"]) {
             if($i>$dataNum){ break; } //防止传来的数组不同
             //if($data[$i]==""){ continue; } 
             $photoDataRow=mysqli_fetch_assoc($albumPhotoQuery);
-            $photoText = $photoDataRow["photoText"];
+            $photoIntroduce = $photoDataRow["photoIntroduce"];
 
-            if ($photoText==$data[$i]){
+            if ($photoIntroduce==$data[$i]){
                 continue;
             }
 
             $iForPhotoText = $i+1;
             $newPhotoText = $data[$i];
-            //UPDATE photos SET photoText = '$photoText' WHERE albumId = $aid AND photoOrder = $iForPhotoText;
-            mysqli_query($db,"UPDATE photos SET photoText = '$newPhotoText' WHERE albumId = $aid AND photoOrder = $iForPhotoText;");
-            //echo "UPDATE photos SET photoText = '$photoText' WHERE albumId = $aid AND photoOrder = $iForPhotoText; </br>";
+            //UPDATE photos SET photoIntroduce = '$photoIntroduce' WHERE albumId = $aid AND photoOrder = $iForPhotoText;
+            mysqli_query($db,"UPDATE photos SET photoIntroduce = '$newPhotoText' WHERE albumId = $aid AND photoOrder = $iForPhotoText;");
+            //echo "UPDATE photos SET photoIntroduce = '$photoIntroduce' WHERE albumId = $aid AND photoOrder = $iForPhotoText; </br>";
 
         }
         echo "改名完成";
