@@ -88,12 +88,8 @@ if ($albumTemplateId != 0){
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=500, initial-scale=1.0 ">
-	<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
     <title>制作相册</title>
-    <link rel="stylesheet" href="../src/css/main-albummake.css">
-	<script>
-	var vConsole = new window.VConsole();
-	console.log("helloworld")
+    <link rel="stylesheet" href="../src/css/main-albummake.css">"helloworld")
 	</script>
 </head>
 <body>
