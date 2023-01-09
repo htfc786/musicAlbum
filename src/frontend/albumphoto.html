@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>提取图片</title>
+  <script src="https://unpkg.com/vue@3"></script> 
+  <script src="https://unpkg.com/vue-router@4"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <link rel="stylesheet" href="../src/css/main-albumphoto.css">
+
+  <script>
+    axios.defaults.baseURL = "https://<YOUAPPID>.lafyun.com";
+  </script>
+</head>
+<body>
+  <div id="main" style="display: none;">
+    <div v-show="!photos.length" style="margin: 8px; color: #f00; font-size: 20px;">提示：此相册没有图片！</div>
+    <div id="image-list">
+      <div class="image-card" v-for="photo in photos" :key="photos.photoOrder">
+        <div class="image-index">{{ photo.photoOrder }}</div>
+        <img :src="photo.photoUrl" class="image-photo">
+        <a :href="photo.photoUrl" :download="photo.originalName" class="image-down">点击下载</a>
+      </div>
+    </div>
+    <div onclick="window.location.href='/'" class="close-btn">返回</div>
+  </div>
+  
+  <div id="app">
+    <router-view></router-view>
+  </div>
+  <script>
+    const Main = {
+      template: document.querySelector("#main").innerHTML,
+      data() {  //数据
+        return {
+          photos: []
+        }
+      },
+      mounted: function () {  // 打开页面时执行
+        if (localStorage.getItem("access_token") == null) {
+          location.href = "./login.html";
+          return;
+        }
+        this.username = localStorage.getItem("username");
+        this.access_token = localStorage.getItem("access_token");
+        this.albumId = this.$route.params.albumId;
+
+        this.getImage();
+      },
+      methods: {
+        getImage: function() {
+          const that = this;
+          axios({
+              url: '/albumapi-show-photo-get',
+              method: 'post',
+              data: {
+                access_token: this.access_token,
+                albumId: this.albumId,
+              },
+            })
+            .then(function (e) {
+              that.photos = e.data.data;
+            })
+        },
+      }
+    }
+    //路由
+    const routes = [
+      { path: '/:albumId/', name: "main", component: Main },
+    ]
+    //创建 router
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
+      routes,
+    })
+    //创建VueApp 挂载路径
+    const app = Vue.createApp({})
+    app.use(router)
+    app.mount('#app')
+  </script>
+</body>
+</html>

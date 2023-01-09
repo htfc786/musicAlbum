@@ -1,0 +1,98 @@
+/*********** 声明公共元素样式 ***********/
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    /*background-color: #efefef;*/
+}
+li {
+    list-style-type: none;
+}
+a {
+    color:#000;
+    text-decoration-line: none;
+}
+a:hover {
+    color: brown;
+    text-decoration-line: underline;
+}
+/*********** 声明顶部样式 ***********/
+header {
+    overflow: hidden;
+    height: 60px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 6px;
+}
+header div {
+    margin: auto;
+}
+header h1 {
+    float: left;
+    margin-left: 20px;
+    font-weight: normal;
+    line-height: 60px;
+}
+header nav {
+    float: right;
+    margin-right: 20px;
+}
+header nav ul li {
+    float: left;
+    padding-left: 30px;
+    line-height: 80px;
+}
+/*********** 声明主体区样式 ***********/
+/*侧边导航栏*/
+main {
+    min-width: 500px;  /*内容区宽度*/
+    height: 700px;
+    margin: 30px auto 0;
+    padding-left: 200px;
+    overflow: hidden;
+    /*布局参考线*/
+    /*border: 1px solid red;*/
+}
+main article {
+    float: left;
+    /*布局参考色块*/
+    /*background-color: #FD6FCF;*/
+    width: 100%;
+    min-height: 100%;
+    /*(background: linear-gradient(to bottom, lightgrey, #ededed);*/
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+}
+main aside {
+    float: left;
+    border-radius: 6px;
+    background:linear-gradient(to left, lightgrey, #ededed);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+    width: 175px;
+    margin-left: -100%;
+    position: relative;
+    left: -180px;
+}
+main aside nav li {
+    line-height: 2rem;
+}
+main aside nav li:first-child,main aside nav li a{
+    padding: 10px 15px;
+    display: block;
+}
+main aside nav li a.active,main aside nav li a:hover {
+    border-left: 3px solid brown!important;
+    background: #efefef;
+    padding-left: 15px;
+    margin-left: -3px;
+}
+main article iframe {
+    min-width: 100%;
+    min-height: 600px;
+    margin: auto;
+    border: none;
+}
+main article footer p {
+    text-align: center;
+}

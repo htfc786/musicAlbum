@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人空间</title>
+  <link rel="stylesheet" href="./src/css/main-index.css">
+    
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    axios.defaults.baseURL = "https://<YOUAPPID>.lafyun.com";
+  </script>
+</head>
+<body>
+  <div id="app">
+    <h2 id="page-title">{{ username }} 的个人空间</h2>
+    <h3 id="little-page-title" style="margin: 8px;">
+      <a href=''>登出</a>
+    </h3>
+    <div id="newbookbtn" @click="newAlbum()">+ 制作新相册</div>
+    <div id="album-list" style="margin-top: 20px;">
+      <div v-show="!albums.length" class="album-red-msg">当前用户中没有相册，创建一个吧</div>
+      <div class="item" v-for="album in albums">
+        <div class="date">
+          <div class="timediv"></div>
+          <div class="time">{{ album.albumCreateDate }}</div>
+          <div class="sharebtn" @click="shareAlbum(album._id)">
+            <img class="shareicon" src="./src/image/index-share.png">
+          </div>
+        </div>
+        <div class="info">
+          <div @click="openAlbum(album._id)">
+            <div class="pic" :style="{ 'background-image': 'url('+ (album.albumCover ? album.albumCover : './src/image/index-onimage.png') +')' }"></div>
+            <div class="word">{{ album.albumName }}</div>
+            <div class="num">共 {{ album.photoNum }} 张照片</div>
+            <div class="pv">{{ album.albumCreateDate }}</div>
+          </div>
+          <div class="get-pic" @click="openAlbumPhoto(album._id)">提取照片</div>
+          <div class="edit" @click="openAlbumMake(album._id)">编   辑</div>
+          <div class="del" @click="delAlbum(album._id)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    //Vue.prototype.dayjs = dayjs;
+    Vue.createApp({
+      data() {  //数据
+        return {
+          username: "",
+          access_token: "",
+          albums: [],
+        }
+      },
+      mounted: function () {  // 打开页面时执行
+        if (localStorage.getItem("access_token") == null) {
+          location.href = "./login.html";
+          return;
+        }
+        this.username = localStorage.getItem("username");
+        this.access_token = localStorage.getItem("access_token");
+
+        document.title = this.username + " 的个人空间"
+
+        this.getAlbum();
+      },
+      methods:{ // 方法
+        getAlbum: function () {
+          axios({ // 请求
+              method: 'POST',
+              url:'/albumapi-album-getmy',
+              data: {
+                access_token: this.access_token,
+              }
+            })
+            .then(res => {
+              console.log(res.data)
+              if (res.data.code != 200){  //不是200 处理失败
+                location.href = "./login.html";
+                return;
+              }
+              console.log(res.data.data.albumData)
+              this.albums = res.data.data.albumData;
+            });
+        },
+        newAlbum: function () {
+          if(!confirm("确定要新建吗？")){
+              return;
+          }
+          axios({ // 请求
+              method: 'POST',
+              url:'/albumapi-album-add',
+              data: {
+                access_token: this.access_token,
+              }
+            })
+            .then(res => {
+              console.log(res.data)
+              if (res.data.code != 200){  //不是200 处理失败
+                location.href = "./login.html";
+                return;
+              }
+              this.getAlbum();
+            });
+        },
+        delAlbum: function (albumId) {
+          if(!confirm("此操作将会删除此相册，确定要删除吗？")){
+              return;
+          }
+          if(!confirm("删除后不可恢复，确定要删除吗？")){
+              return;
+          }
+          //console.log("删除：", albumId);
+          axios({ // 请求
+              method: 'POST',
+              url:'/albumapi-album-del',
+              data: {
+                access_token: this.access_token,
+                album_id: albumId,
+              }
+            })
+            .then(res => {
+              console.log(res.data)
+              if (res.data.code != 200){  //不是200 处理失败
+                console.log(res.data);
+                alert(res.data.error)
+                return;
+              }
+              this.getAlbum();
+            });
+
+        },
+        openAlbum: function (albumId) {
+          location.href = "./albumshow.html#"+albumId;
+        },
+        openAlbumPhoto: function (albumId) {
+          location.href = "./albumphoto.html#"+albumId;
+        },
+        openAlbumMake: function (albumId) {
+          location.href = "./albummake.html#/"+albumId;
+        },
+        shareAlbum: function (albumId) {
+          var urlPath = window.document.location.href;
+          var docPath = window.document.location.pathname;
+          var serverPath = urlPath.substring(0, urlPath.indexOf(docPath));
+
+          let content = serverPath+"/albumshow.html#"+albumId;
+
+          let copy = (e)=>{
+            e.preventDefault()
+            e.clipboardData.setData('text/plain',content)
+            document.removeEventListener('copy',copy)
+          }
+          document.addEventListener('copy',copy)
+          document.execCommand("Copy");
+          alert("已复制相册链接");
+        }
+      },
+
+    }).mount('#app');
+  </script>
+</body>
+</html>

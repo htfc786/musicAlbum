@@ -1,0 +1,671 @@
+body {
+    margin: 0;
+}
+/* 动画 */
+@keyframes image-turn {
+    0% {
+        -webkit-transform:rotate(0deg);
+    }
+    100% {
+        -webkit-transform:rotate(360deg);
+    }
+}
+/* 相册显示区 */
+#main .footer{
+    position: fixed; 
+    top: 100%;
+    left: 0px; 
+    max-width: 500px;
+    width:100%;
+    height: 70px;
+    display: -webkit-flex;
+    margin-top: -70px;
+}
+#main .footer a {
+    position: relative; 
+    width: 20%; 
+    height: 100%; 
+    background-size: 100% 100%;
+}
+.back{
+    display:block; 
+    width: 80px; 
+    height: 40px; 
+    background-color: rgba(0, 0, 0, 0.3); 
+    position: fixed; 
+    text-align: center; 
+    line-height: 40px; 
+    color: #fff; 
+    border-radius: 40px; 
+    font-size: 21px;
+    left: 10px; 
+    top: 30px; 
+    border: 1px solid rgba(255,255,255,.4);
+}
+/* 模板选择 */
+#template-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0px;
+    width: 100%;
+    height: 60px;
+    background-color: #fff;
+    z-index: 999;
+}
+#template-menu {
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 60px;
+    line-height: 58px;
+    background-color: #fff;
+    border-bottom: 1px solid #D6D4D4;
+    overflow: auto hidden;
+    margin: 0 0 0 80px;
+}
+#template-menu div {
+    font-size: 16pt;
+    text-align: center;
+    margin: 0 7.5px;
+    display: inline-block;
+}
+.template-menu-btn{
+    color: rgb(181, 181, 181); 
+    width: auto; 
+    margin: 0px 7.5px; 
+    border-bottom: 0px solid rgb(255, 255, 255);
+}
+.template-menu-btnon{
+    border-bottom: 2px solid #444;
+    color: #444;
+}
+#template-box {
+    position: absolute;
+    margin-top: 60px;
+    /* height: 620px; */
+    /* width: 500px; */
+    /* overflow-y: auto; */
+    -webkit-overflow-scrolling: touch;
+}
+.template-item {
+    position: relative;
+    float: left;
+    width: 150px;
+    margin: 10px 0 0 12px;
+    height: 190px;
+    border-left: 1px solid #dddddd;
+    border-top: 1px solid #dddddd;
+    box-shadow: 2px 2px 3px #dddddd;
+    padding: 5px;
+    background-color: #fff;
+    /* visibility: hidden; */
+    visibility: visible;
+}
+.template-item img {
+    position: relative;
+    width: 129px;
+    height: 129px;
+    margin-left: 5px;
+}
+.template-item span {
+    width: 100%;
+    line-height: 40px;
+    text-align: center;
+    display: block;
+    font-size: 15pt;
+    /* font-family: '微软雅黑'; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.template-item p {
+    margin: 0;
+    color: #999;
+    font-size: 5pt;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.template-close {
+    position: absolute;
+    width: 72px;
+    height: 40px;
+    margin-top: 10px;
+    /* left: 422px; */
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 19px;
+    line-height: 39px;
+    text-align: center;
+    padding-left: 0px;
+    margin-left: 8px;
+}
+#template-getInfo-loading{
+    position: absolute;
+    /* top: 40%; */
+    width: 100px;
+    /* left: 100px; */
+    height: 135px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#template-getInfo-loading-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: black;
+    opacity: 0.68;
+}
+#template-getInfo-loading-image{
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    left: 16px;
+    animation: image-turn 1s linear infinite;
+}
+#template-getInfo-loading-text{
+    position: absolute;
+    line-height: 70px;
+    top: 70px;  
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 1;
+    color: white;
+    font-size: 22px;
+}
+/* 音乐 */
+#music-header {
+    position: fixed;
+    margin: 0 8px 0 8px;
+    top: 0;
+    left: 0;
+    bottom: 0px;
+    width: 100%;
+    height: 60px;
+    background-color: #fff;
+    z-index: 999;
+}
+#music-menu {
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 60px;
+    line-height: 58px;
+    background-color: #fff;
+    border-bottom: 1px solid #D6D4D4;
+    overflow: auto hidden;
+    margin: 0 80px 0 65px;
+}
+#music-menu div {
+    font-size: 16pt;
+    text-align: center;
+    margin: 0 7.5px;
+    display: inline-block;
+}
+.music-menu-btn{
+    color: rgb(181, 181, 181); 
+    width: auto; 
+    margin: 0px 7.5px; 
+    border-bottom: 0px solid rgb(255, 255, 255);
+}
+.music-menu-btnon{
+    border-bottom: 2px solid #444;
+    width: auto; 
+    margin: 0px 7.5px; 
+    color: #444;
+}
+.music-close {
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    margin-top: 10px;
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 19px;
+    line-height: 39px;
+    text-align: center;
+    padding-left: 0px;
+}
+#music-search-btn{
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    margin-top: 10px;
+    margin-right: 15px;
+    right: 0;
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 19px;
+    line-height: 39px;
+    text-align: center;
+    padding-left: 0px;
+}
+.music-list {
+    /* position: absolute; */
+    margin-top: 60px;
+    /* height: 620px; */
+    width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.music-item {
+    position: relative;
+    height: 80px;
+    width: 100%;
+    border-bottom: 1px ridge #c7c7c7;
+    background-color: #fff;
+}
+.music-item-img {
+    position: relative;
+    float: left;
+    margin: 24px 0 0 15px;
+}
+.music-item-title {
+    position: relative;
+    float: left;
+    text-align: left;
+    margin-left: 10px;
+    max-width: 55%;
+    font-size: 15pt;
+    font-weight: bold;
+    color: black;
+    height: 80px;
+    line-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.music-item-ok {
+    position: relative;
+    float: right;
+    text-align: center;
+    height: 40px;
+    line-height: 38px;
+    margin: 20px 20px 0 0;
+    font-size: 20px;
+    width: 70px;
+    background-color: #444;
+    color: #fff;
+    border-radius: 20px;
+}
+#music-getInfo-loading{
+    position: absolute;
+    /* top: 40%; */
+    width: 100px;
+    /* left: 100px; */
+    height: 135px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#music-getInfo-loading-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: black;
+    opacity: 0.68;
+}
+#music-getInfo-loading-image{
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    left: 16px;
+    animation: image-turn 1s linear infinite;
+}
+#music-getInfo-loading-text{
+    position: absolute;
+    line-height: 70px;
+    top: 70px;  
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 1;
+    color: white;
+    font-size: 22px;
+}
+/* 图片 */
+#image-header {
+    position: fixed;
+    margin: 0 8px 0 8px;
+    top: 0;
+    left: 0;
+    bottom: 0px;
+    width: 100%;
+    height: 60px;
+    background-color: #fff;
+    z-index: 999;
+}
+.image-close {
+    position: absolute;
+    width: 100px;
+    height: 40px;
+    margin-top: 10px;
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+    padding-left: 0px;
+    margin-left: 20px;
+}
+.image-frush-btn{
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    margin-top: 10px;
+    margin-right: 15px;
+    right: 0;
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 19px;
+    line-height: 39px;
+    text-align: center;
+    padding-left: 0px;
+    margin-right: 160px;
+}
+.image-addimg-btn{
+    position: absolute;
+    width: 125px;
+    height: 40px;
+    margin-top: 10px;
+    right: 0;
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 19px;
+    line-height: 39px;
+    text-align: center;
+    padding-left: 0px;
+    margin-right: 20px;
+}
+.image-list {
+    /* position: absolute; */
+    margin-top: 60px;
+    /* height: 620px; */
+    width: 100%;
+    /* overflow-y: auto; */
+    -webkit-overflow-scrolling: touch;
+}
+#image-box{
+    /* position: absolute; */
+    margin-top: 60px;
+    /* height: 620px; */
+    width: 100%;
+    /* overflow-y: auto; */
+    -webkit-overflow-scrolling: touch;
+}
+.image-msg{
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.image-item{
+    width: 120px; 
+    height: 150px; 
+    position: relative; 
+    float: left; 
+    width: 120px; 
+    margin: 16px 0 0 8px; 
+    height: 150px; 
+    border: 1px solid #BFBFBF; 
+    box-shadow: 2px 2px 3px #aaaaaa;
+}
+.image-pic{
+    position: absolute; 
+    width: 120px; 
+    height: 150px; 
+    Object-fit: cover;
+}
+.image-del{
+    position: absolute; 
+    right: -2px;
+}
+.image-del img{
+    width: 25px; 
+    height: 25px;
+    margin-right: 2px;
+}
+.image-turn{
+    position: absolute;
+}
+.image-turn img{
+    width: 25px;
+    height: 25px;
+}
+.image-next{
+    position: absolute; 
+    bottom: -2px; 
+    width: 120px; 
+    height: 30px;
+}
+.image-next-left{
+    position: absolute; 
+    opacity: 0.8;
+    width: 60px; 
+}
+.image-next-right{
+    position: absolute; 
+    opacity: 0.8; 
+    right: 0px; 
+    transform: scale(-1,1);
+    width: 60px; 
+}
+#image-screenBlack{
+    position: absolute; 
+    width: 100%;
+    height: 100%; 
+    /* background-color: black; */
+    opacity: 0.5; 
+    top:0;
+    left:0;
+    z-index: 9999;
+}
+#image-screenLoading{
+    position: absolute;
+    /* top: 40%; */
+    width: 300px;
+    left: 100px;
+    height: 100px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+}
+#image-screenLoading-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: black;
+    opacity: 0.68;
+}
+#image-screenLoading-image{
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    left: 16px; 
+    animation: image-turn 1s linear infinite;
+}
+#image-uploadMsg{
+    position: absolute;
+    line-height: 70px;
+    top: 15px;
+    left: 102px;
+    z-index: 1;
+    color: white;
+    font-size: 22px;
+}
+#image-getInfo-loading{
+    position: absolute;
+    /* top: 40%; */
+    width: 100px;
+    /* left: 100px; */
+    height: 135px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#image-getInfo-loading-background{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: black;
+    opacity: 0.68;
+}
+#image-getInfo-loading-image{
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    left: 16px;
+    animation: image-turn 1s linear infinite;
+}
+#image-getInfo-loading-text{
+    position: absolute;
+    line-height: 70px;
+    top: 70px;  
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 1;
+    color: white;
+    font-size: 22px;
+}
+/* 写文字 */
+#write{
+    background-color: rgb(246, 246, 246);
+}
+#write-header {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    left: 0;
+    bottom: 0px;
+    width: 100%;
+    height: 60px;
+    background-color: #fff;
+    z-index: 999;
+}
+.write-close {
+    position: absolute;
+    width: 100px;
+    height: 40px;
+    margin-top: 10px;
+    color: white;
+    background-color: #444;
+    border-radius: 20px;
+    font-size: 19px;
+    line-height: 40px;
+    text-align: center;
+    padding-left: 0px;
+    margin-left: 20px;
+}
+#write-box{
+    margin-top: 70px;
+}
+#write .albumname {
+    line-height: 30px;
+    width: 470px;
+    padding: 6px 12px;
+    background: #e4e4e4;
+    font-size: 20pt;
+    resize: none;
+    outline: none;
+    margin: 6px 3px;
+    border: 1px solid rgba(0,0,0,0.12);
+}
+.write-item {
+    width: 500px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    background-color: white;
+}
+.write-bigpic {
+    width: 160px;
+    margin: 8px;
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #BFBFBF;
+    box-shadow: 2px 2px 3px #aaaaaa;
+    -webkit-touch-callout: none;
+}
+.write-editwords {
+    position: absolute;
+    top: 8px;
+    left: 180px;
+    height: 100px;
+    width: 260px;
+    resize: none;
+    border: none;
+    border-radius: 4px;
+    font-size: 22px;
+    line-height: 30px;
+    color: #555;
+    background-color: #fff;
+    padding: 6px 12px;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+.write-bigup {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+}
+.write-bigdown {
+    position: absolute;
+    bottom: 8px;
+    right: 66px;
+}
+#write-getInfo-loading{
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: auto;
+    top: 15px;
+    left: 0;
+    right: 0;
+    background-color: green;
+    opacity: 0.6;
+    z-index: 100000;
+}
+#write-getInfo-loading-text{
+    position: absolute;
+    top: 14px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 1;
+    color: white;
+    font-size: 16px;
+}

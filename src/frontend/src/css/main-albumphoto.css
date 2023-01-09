@@ -1,0 +1,62 @@
+body {
+    background: #f3f3f3;
+}
+.image-card{
+    width: 100%; 
+    position: relative;
+    max-width: 500px;
+}
+.image-index{
+    width: 40px;
+    height: 30px; 
+    background-color: #FF9800; 
+    border-radius: 15px; 
+    color: #fff; 
+    line-height: 30px; 
+    text-align: center; 
+    position: relative; 
+    float: left; 
+    margin-top: 10px;
+    margin-left: 8px; 
+    font-size: 20px; 
+    font-weight: bold;
+}
+.image-photo{
+    width: 80%; 
+    position: relative; 
+    margin-top: 10px; 
+    margin-left: 5px; 
+    box-shadow: 2px 3px 3px #656565;
+}
+.image-down:hover {
+    background-color: #ccc;
+    color: #000;
+}
+.image-down{
+    display: inline-block;
+    position: absolute;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #20b1aa;
+    text-decoration: none;
+    text-align: center;
+    color: #fff;
+    margin-top: 10px;
+    margin-left: -100px;
+}
+.close-btn{
+    display:block; 
+    width: 80px; 
+    height: 40px; 
+    background-color: rgba(0, 0, 0, 0.3); 
+    position: fixed; 
+    text-align: center; 
+    line-height: 40px; 
+    color: #fff; 
+    border-radius: 40px; 
+    font-size: 21px; 
+    left: 10px; 
+    top: 30px; 
+    border: 1px solid rgba(255,255,255,.4);
+}
