@@ -10,10 +10,10 @@ const Photo = {
       <div class="image-item" v-for="photo in photos" :key="photos.photoOrder">
         <img :src="photo.photoUrl" alt="" class="image-pic">
         <div class="image-del" @click="delImage(photo._id)">
-          <img src="../src/image/make-image-cha.png">
+          <img src="./src/image/make-image-cha.png">
         </div>
         <!--<div class="image-turn">
-          <img onclick="" src="../src/image/make-image-turn.png">
+          <img onclick="" src="./src/image/make-image-turn.png">
         </div>-->
         <div class="image-next">
           <div></div>
@@ -27,13 +27,13 @@ const Photo = {
     <div id="image-screenBlack" v-show="loading.isShow"></div>
     <div id="image-screenLoading" v-show="loading.isShow">
       <div id="image-screenLoading-background"></div>
-      <img id="image-screenLoading-image" src="/src/image/make-image-loading.png">
+      <img id="image-screenLoading-image" src="./src/image/make-image-loading.png">
       <span id="image-uploadMsg">{{loading.showText}}</span>
     </div>
     
     <div id="image-getInfo-loading" v-show="false">
       <div id="image-getInfo-loading-background"></div>
-      <img id="image-getInfo-loading-image" src="/src/image/make-image-loading.png">
+      <img id="image-getInfo-loading-image" src="./src/image/make-image-loading.png">
       <span id="image-getInfo-loading-text" v-show="false">加载中</span>
     </div>
 

@@ -16,10 +16,10 @@ const Write = {
         <div class="write-bigpic" :style="{ 'background-image': 'url('+ photo.photoUrl +')' }"></div>
         <textarea class="write-editwords" v-model="photo.photoText" v-on:input="textChange(photo._id, photo.photoOrder)" placeholder="点击这里给照片添加文字（限16字）" maxlength="16"></textarea>
         <div class="write-bigup" @click="moveImage(photo._id, 'up')">
-         <img src="/src/image/make-write-posup.png">
+         <img src="./src/image/make-write-posup.png">
         </div>
         <div class="write-bigdown" @click="moveImage(photo._id, 'down')">
-          <img src="/src/image/make-write-posdown.png">
+          <img src="./src/image/make-write-posdown.png">
         </div>
       </div>
     </div>

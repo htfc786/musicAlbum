@@ -13,6 +13,12 @@
 - albumCreateDate 创建时间 Date类型
 - albumUserId 创建用户
 - albumCover 相册封面图片URL
+- musicSave 相册音乐存储方式
+ - file 服务器音乐文件
+ - music163 网易云外链
+- musicUrl 相册Url
+  - 如果是服务器音乐文件 直接存url
+  - 网易云外链 存网易云的音乐id
 
 #### album_photos 照片表
 - _id 图片id 自动生成
@@ -22,3 +28,11 @@
 - photoUrl 图片URL
 - originalName 图片原名
 - photoText 写的文字
+
+#### album_music 音乐表
+- _id 音乐id 自动生成
+- musicName 音乐名称
+- musicComposer 音乐作曲家
+- musicUrl 图片URL
+- userId 上传用户id
+- musicGroup 音乐分类

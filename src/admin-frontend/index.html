@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>欢迎使用音乐相册后台管理</title>
+  <link rel="stylesheet" href="./src/admin.css">
+  
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="https://unpkg.com/vue-router@4"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/element-plus"></script>
+  <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+
+  <script>
+    axios.defaults.baseURL = "https://<YOUAPPID>.lafyun.com";
+  </script>
+</head>
+<body>
+  <div id="app">
+    <!--感谢 https://www.php.cn/blog/detail/8373.html 提供的html代码-->
+    <!--顶部信息区-->
+    <header role="header">
+      <div>
+        <h1>音乐相册后台管理</h1>
+        <nav role="user">
+          <ul>
+            <li>欢迎管理员:<strong>{{ username }}</strong></li>
+            <li><a @click="logout()">退出登录</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <!--圣杯二列布局-->
+    <main role="main">
+      <!--主体内联框架区-->
+      <article role="content">
+        <router-view></router-view>
+      </article>
+      <!--左侧导航区-->
+      <aside>
+        <nav role="option">
+          <ul>
+            <li>> 菜单 <</li>
+            <li><router-link :to="{ name: '' }">用户管理</router-link></li>
+            <li><router-link :to="{ name: '' }">相册管理</router-link></li>
+            <li><router-link :to="{ name: '' }">模板管理</router-link></li>
+            <li><router-link :to="{ name: 'music' }">音乐管理</router-link></li>
+            <li><router-link :to="{ name: '' }">系统设置</router-link></li>
+          </ul>
+        </nav>
+      </aside>
+    </main>
+  </div>
+
+  <script src="./components/music.js"></script>
+  <script src="./components/music_add.js"></script>
+
+  <script>
+    const Index = {
+      mounted: function () {
+        this.$router.replace({ name: "music" })
+      },
+    }
+    //路由
+    const routes = [
+      { path: '/', name: "index", component: Index },
+      { path: '/music/', name: "music", component: Music },
+      { path: '/music/add/', name: "music_add", component: MusicAdd },
+    ]
+    //创建 router
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
+      routes,
+    })
+    //创建VueApp 挂载路径
+    const app = Vue.createApp({
+      data() {  //数据
+        return {
+          username: "",
+          access_token: "",
+        }
+      },
+      mounted: function () {  // 打开页面时执行
+        if (localStorage.getItem("access_token") == null) {
+          location.href = "./login.html";
+          return;
+        }
+        if (!localStorage.getItem("isadmin")) {
+          location.href = "./login.html";
+          return;
+        }
+        this.username = localStorage.getItem("username");
+        this.access_token = localStorage.getItem("access_token");
+      },
+      methods:{ // 方法
+        logout: function () {
+          if (!window.confirm('是否退出?')) {
+            return;
+          }
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("userid");
+          localStorage.removeItem("username");
+          localStorage.removeItem("isadmin");
+          location.href = "./login.html";
+        }
+      },
+    })
+    app.use(router)
+    app.use(ElementPlus)
+    app.mount('#app')
+  </script>
+</body>
+</html>

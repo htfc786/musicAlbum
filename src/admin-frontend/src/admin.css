@@ -1,10 +1,103 @@
+/*********** 声明公共元素样式 ***********/
+* {
+    margin: 0;
+    padding: 0;
+}
 body {
-    font-size: 14px;
+    /*background-color: #efefef;*/
 }
-td {
-    padding: 8px;
-    border: 1px solid #ddd;
+li {
+    list-style-type: none;
 }
+a {
+    color:#000;
+    text-decoration-line: none;
+}
+a:hover {
+    color: brown;
+    text-decoration-line: underline;
+}
+/*********** 声明顶部样式 ***********/
+header {
+    overflow: hidden;
+    height: 60px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 6px;
+}
+header div {
+    margin: auto;
+}
+header h1 {
+    float: left;
+    margin-left: 20px;
+    font-weight: normal;
+    line-height: 60px;
+}
+header nav {
+    float: right;
+    margin-right: 20px;
+}
+header nav ul li {
+    float: left;
+    padding-left: 30px;
+    line-height: 80px;
+}
+/*********** 声明主体区样式 ***********/
+/*侧边导航栏*/
+main {
+    min-width: 500px;  /*内容区宽度*/
+    height: 700px;
+    margin: 30px auto 0;
+    padding-left: 200px;
+    overflow: hidden;
+    /*布局参考线*/
+    /*border: 1px solid red;*/
+}
+main article {
+    float: left;
+    /*布局参考色块*/
+    /*background-color: #FD6FCF;*/
+    width: 100%;
+    min-height: 100%;
+    /*(background: linear-gradient(to bottom, lightgrey, #ededed);*/
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+}
+main aside {
+    float: left;
+    border-radius: 6px;
+    background:linear-gradient(to left, lightgrey, #ededed);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+    width: 175px;
+    margin-left: -100%;
+    position: relative;
+    left: -180px;
+}
+main aside nav li {
+    line-height: 2rem;
+}
+main aside nav li:first-child,main aside nav li a{
+    padding: 10px 15px;
+    display: block;
+}
+main aside nav li a.active,main aside nav li a:hover {
+    border-left: 3px solid brown!important;
+    background: #efefef;
+    padding-left: 15px;
+    margin-left: -3px;
+}
+main article iframe {
+    min-width: 100%;
+    min-height: 600px;
+    margin: auto;
+    border: none;
+}
+main article footer p {
+    text-align: center;
+}
+
+/* 内部表格部分 bootcss */
 .text-center{
     text-align: center;
 }
@@ -13,9 +106,14 @@ td {
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
+    font-size: 14px;
+}
+.container td {
+    padding: 8px;
+    border: 1px solid #ddd;
 }
 .panel {
-    margin: 20px;
+    /* rgin: 20px; */
     border-color: #ddd;
     margin-bottom: 20px;
     background-color: #fff;
@@ -53,6 +151,7 @@ td {
 .bg-success {
     background-color: #dff0d8;
 }
+
 /* 底部 bootstrap */
 .row {
     margin-right: -15px;
@@ -91,7 +190,7 @@ td {
     background-color: #337ab7;
     border-color: #337ab7;
 }
-/*
+/* html代码 哪个好看选哪个
 <div class="col-md-12">
     <!--分页通常写到一对nav标签中,居中显示-1->
     <nav class="text-center">
@@ -258,6 +357,7 @@ td {
     background-color: #fff;
     border-color: #ddd;
 }
+
 /* 弹出窗口 */
 /* https://blog.csdn.net/pengxiang1998/article/details/105705755 */
 .addUser{
@@ -379,3 +479,10 @@ td {
 	color:red;
 	cursor: cell;
 }*/
+
+/* 自定义 */
+.from-lable {
+    padding-right: 25px;
+    padding-left: 25px;
+    padding-top: 20px;
+}

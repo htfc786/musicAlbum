@@ -174,3 +174,17 @@
   - msg  信息
 
 ### 后台管理
+
+#### 用户登录
+- 地址：`/albumadmin-user-login`
+- 请求方式：POST
+- 请求参数：
+  1. username 用户名
+  2. password 密码
+- 返回：json
+  - code 返回请求值
+  - error 处理失败时候的报错，只有处理失败是会有
+  - msg  信息
+  - user_id  用户id
+  - access_token  登录token
+

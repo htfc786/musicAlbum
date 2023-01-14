@@ -14,7 +14,7 @@ const Template = {
     </div>
     <div id="template-getInfo-loading" style="display:none;">
       <div id="template-getInfo-loading-background"></div>
-      <img id="template-getInfo-loading-image" src="/src/image/make-image-loading.png">
+      <img id="template-getInfo-loading-image" src="./src/image/make-image-loading.png">
       <span id="template-getInfo-loading-text">加载中</span>
     </div>
   </div>
