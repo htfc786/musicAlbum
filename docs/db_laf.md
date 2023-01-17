@@ -19,6 +19,7 @@
 - musicUrl 相册Url
   - 如果是服务器音乐文件 直接存url
   - 网易云外链 存网易云的音乐id
+- templateId 模板id
 
 #### album_photos 照片表
 - _id 图片id 自动生成
@@ -36,3 +37,10 @@
 - musicUrl 图片URL
 - userId 上传用户id
 - musicGroup 音乐分类
+
+#### album_template 模板表
+- _id 模板id 自动生成
+- templateName 模板名称
+- templatePath 模板路径
+- userId 上传用户id
+- templateGroup 分类

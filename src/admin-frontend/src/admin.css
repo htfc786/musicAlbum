@@ -486,3 +486,9 @@ main article footer p {
     padding-left: 25px;
     padding-top: 20px;
 }
+.templateIMG{
+    display: inline-block; 
+    width: 100%; 
+    max-width: 60px; 
+    height: auto;
+}
