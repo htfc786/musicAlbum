@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册_音乐相册</title>
+
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    axios.defaults.baseURL = "https://<YOUAPPID>.lafyun.com";
+  </script>
+  <style>
+    body {
+      background: #f3f3f3;
+    }
+    #app {
+      background: #fff;
+      margin: 0 auto;
+      padding: 10px;
+    }
+    #page-title {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1 id="page-title">注册</h1>
+    <hr>
+    <div id="page-title">
+      用户名：<input v-model="username" type="text" name="username" />  
+      <br/>  
+      密码：<input v-model="password" type="password" name="password" />  
+      <br/>
+      确认密码：<input v-model="confirm" type="password" name="confirm"/>  
+      <br/>  
+      {{ info }}
+      <input @click="login()" type="submit" value="注册" />
+      <br/>  
+      <span>已有账号？<a href="login.html">登录</a></span>
+    </div>
+    <hr>
+  </div>
+  <script>
+    Vue.createApp({
+      data() {  //数据
+        return {
+          username: "",
+          password: "",
+          confirm: "",
+          info: ""
+        }
+      },
+      mounted: function () {  // 打开页面时执行
+
+      },
+      methods:{ // 方法
+        login: function () {
+          axios({ // 请求登录
+              method: 'POST',
+              url:'/albumapi-user-register',
+              data: {
+                username: this.username,
+                password: this.password,
+                confirm: this.confirm,
+              }
+            })
+            .then(res => {
+              console.log(res.data)
+              if (res.data.code != 200){  //不是200 处理失败
+                this.info = res.data.error;
+                return;
+              }
+              alert("注册成功！")
+
+              location.href = "./login.html";
+            });
+        }
+      },
+
+    }).mount('#app');
+  </script>
+</body>
+</html>
