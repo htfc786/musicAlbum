@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+	<style>
+	@-webkit-keyframes zhuan {
+		0%{
+			-webkit-transform:rotate(0deg);
+		}
+		100%{
+			-webkit-transform:rotate(360deg);
+		}
+	}
+	#img > img{
+		max-width: 500px;
+		min-width: 500px;
+	}
+	</style>
+	<script src="sdk.js"></script>
+	<script>
+		var data = getData();
+		var albumName = data.name;
+        var imgList = data.image;
+		var words = data.text;
+	</script>
+	
+</head>
+<body>
+	
+    <h1>模板1</h1>
+    <img src="./1.bmp"></img>
+    <div id="img"></div>
+    <script>
+		var get_pid = function(url) {
+			var index1 = url.indexOf("?");
+			if (index1 != -1) {
+				url = url.substr(0, index1);
+			}
+			return url.toString().substr(url.lastIndexOf("/") + 1);
+		}
+		var word;
+		
+        var imgDiv = document.getElementById("img");
+		imgDiv.innerHTML+="<h1 style='font-size:50px'>"+albumName+"</h1></br>"
+		document.title=albumName;
+        for (var i=0;i<imgList.length;i++) {
+			word = words[get_pid(imgList[i])];
+			if (!word){
+				word = "";
+			}
+            imgDiv.innerHTML+="<span>image"+(i+1)+" "+word+"</span></br><img src="+imgList[i]+"></img></br>"
+        }
+		
+    </script>
+</body>
+</html>
