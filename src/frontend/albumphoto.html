@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>提取图片</title>
   <script src="https://unpkg.com/vue@3"></script> 
   <script src="https://unpkg.com/vue-router@4"></script>
@@ -25,7 +24,7 @@
         <a :href="photo.photoUrl" :download="photo.originalName" class="image-down">点击下载</a>
       </div>
     </div>
-    <div onclick="window.location.href='/'" class="close-btn">返回</div>
+    <div onclick="location.href='./index.html';" class="close-btn">返回</div>
   </div>
   
   <div id="app">
@@ -67,6 +66,9 @@
         },
       }
     }
+    
+    var phoneScale = parseInt(window.screen.width)/500;
+    document.write('<meta name="viewport" content="width=500, min-height=750, initial-scale=' + phoneScale +', maximum-scale='+phoneScale+', user-scalable=0" /> '); 
     //路由
     const routes = [
       { path: '/:albumId/', name: "main", component: Main },

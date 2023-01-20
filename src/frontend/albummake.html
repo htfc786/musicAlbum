@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=500, initial-scale=1.0">
   <title>制作相册</title>
   <link rel="stylesheet" href="./src/css/main-albummake.css">
   
@@ -41,6 +40,8 @@
   <script src="./components/albumMake-Write.js"></script>
   
   <script>
+    var phoneScale = parseInt(window.screen.width)/500;
+    document.write('<meta name="viewport" content="width=500, min-height=750, initial-scale=' + phoneScale +', maximum-scale='+phoneScale+', user-scalable=0" /> '); 
     //路由
     const routes = [
       { path: '/:albumId/', name: "main", component: Main },

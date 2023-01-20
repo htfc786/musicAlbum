@@ -32,7 +32,7 @@ const Music = {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="music in musics">
+            <tr v-for="music of musics">
               <td>{{ music._id }}</td>
               <td>{{ music.musicName }}</td>
               <td>{{ music.musicComposer }}</td>

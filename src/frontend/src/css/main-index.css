@@ -8,25 +8,22 @@ body {
     background: #fff;
     width: 500px;
     margin: 0 auto;
-    padding: 10px;
 }
 #page-title {
     margin: 10px 0 0 0;
     text-align: center;
 }
 #newbookbtn {
-    left: 30px;
     width: 485px;
     height: 60px;
     background-color: #555;
     border-radius: 5px;
     font-weight: bold;
-    top: 10px;
     font-size: 25px;
     text-align: center;
     line-height: 60px;
     color: #fff;
-    /* display: none; */
+    margin: 8px;
 }
 #album-list{
     position: relative;

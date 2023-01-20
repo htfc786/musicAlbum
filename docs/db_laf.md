@@ -16,7 +16,7 @@
 - musicSave 相册音乐存储方式
  - file 服务器音乐文件
  - music163 网易云外链
-- musicUrl 相册Url
+- musicUrl 音乐Url
   - 如果是服务器音乐文件 直接存url
   - 网易云外链 存网易云的音乐id
 - templateId 模板id

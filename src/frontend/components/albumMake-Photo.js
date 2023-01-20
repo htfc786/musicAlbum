@@ -148,6 +148,7 @@ const Photo = {
             that.loading.showText = "上传成功！";
             // 提示框
             console.log(e)
+            var fileTypes = e.data.fileType;
             var alertText = "";
             for(var i = 0, len = fileTypes.length; i < len; i++) {
               var fileType = fileTypes[i];
