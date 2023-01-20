@@ -11,6 +11,23 @@ body {
     }
 }
 /* 相册显示区 */
+.mainIframe {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+.soundImage {
+    position: fixed;
+    right: 15px;
+    top: 10px;
+}
+.soundImageTurn {
+    animation: 3s linear 0s infinite normal none running image-turn;
+}
 #main .footer{
     position: fixed; 
     top: 100%;
