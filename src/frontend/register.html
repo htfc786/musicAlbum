@@ -38,7 +38,7 @@
       确认密码：<input v-model="confirm" type="password" name="confirm"/>  
       <br/>  
       {{ info }}
-      <input @click="login()" type="submit" value="注册" />
+      <input @click="register()" type="submit" value="注册" />
       <br/>  
       <span>已有账号？<a href="login.html">登录</a></span>
     </div>
@@ -58,8 +58,9 @@
 
       },
       methods:{ // 方法
-        login: function () {
-          axios({ // 请求登录
+        register: function () {
+          let that = this
+          axios({ // 请求注册
               method: 'POST',
               url:'/albumapi-user-register',
               data: {
@@ -71,7 +72,7 @@
             .then(res => {
               console.log(res.data)
               if (res.data.code != 200){  //不是200 处理失败
-                this.info = res.data.error;
+                that.info = res.data.error;
                 return;
               }
               alert("注册成功！")

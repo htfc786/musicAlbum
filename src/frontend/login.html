@@ -52,10 +52,15 @@
         }
       },
       mounted: function () {  // 打开页面时执行
-
+        //判断是否登录
+        if (localStorage.getItem("access_token") != null) {
+          location.href = "./index.html";
+          return;
+        }
       },
       methods:{ // 方法
         login: function () {
+          let that = this
           axios({ // 请求登录
               method: 'POST',
               url:'/albumapi-user-login',
@@ -67,7 +72,7 @@
             .then(res => {
               console.log(res.data)
               if (res.data.code != 200){  //不是200 处理失败
-                this.info = res.data.error;
+                that.info = res.data.error;
                 return;
               }
               //存localStorage
