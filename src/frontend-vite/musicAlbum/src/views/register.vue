@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import API from '@/network/API';
 export default {
   data() {  //数据
     return {
@@ -35,15 +35,7 @@ export default {
   methods:{ // 方法
     register: function () {
       let that = this
-      axios({ // 请求注册
-          method: 'POST',
-          url:'/albumapi-user-register',
-          data: {
-            username: this.username,
-            password: this.password,
-            confirm: this.confirm,
-          }
-        })
+      API.user.register(this.username, this.password, this.confirm)
         .then(res => {
           console.log(res.data)
           if (res.data.code != 200){  //不是200 处理失败

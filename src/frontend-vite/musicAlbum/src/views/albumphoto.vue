@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import API from '@/network/API';
 export default {
   data() {  //数据
     return {
@@ -34,14 +34,7 @@ export default {
   methods: {
     getImage: function() {
       const that = this;
-      axios({
-          url: '/albumapi-show-photo-get',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            albumId: this.albumId,
-          },
-        })
+      API.show.getphoto(this.albumId)
         .then(function (e) {
           that.photos = e.data.data;
         })

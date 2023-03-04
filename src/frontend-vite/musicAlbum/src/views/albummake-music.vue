@@ -24,7 +24,7 @@
 <script>
 import yinfuimg from '@/assets/images/make-music-yinfu.png';
 
-import axios from 'axios';
+import API from '@/network/API';
 export default {
   data() {  //数据
     return {
@@ -54,28 +54,14 @@ export default {
   methods: {
     getImage: function() {
       const that = this;
-      axios({
-          url: '/albumapi-make-music-getlist',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-          },
-        })
+      API.make.music.getlist()
         .then(function (e) {
           that.musics = e.data.data;
         })
     },
     changeMusic: function(musicId){
       const that = this;
-      axios({
-          url: '/albumapi-make-music-change',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            albumId: this.albumId,
-            musicId: musicId
-          },
-        })
+      API.make.music.getlist(this.albumId, musicId)
         .then(function (e) {
           if (e.data.code != 200){
             alert("发生错误："+e.data.error)

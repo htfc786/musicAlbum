@@ -36,7 +36,7 @@
 import share from '@/assets/images/index-share.png'
 import onimage from '@/assets/images/index-onimage.png'
 
-import axios from 'axios';
+import API from '@/network/API'
 export default {
   data() {  //数据
     return {
@@ -65,13 +65,7 @@ export default {
   },
   methods:{ // 方法
     getAlbum: function () {
-      axios({ // 请求
-          method: 'POST',
-          url:'/albumapi-album-getmy',
-          data: {
-            access_token: this.access_token,
-          }
-        })
+      API.album.getmy()
         .then(res => {
           console.log(res.data)
           if (res.data.code != 200){  //不是200 处理失败
@@ -86,13 +80,7 @@ export default {
       if(!confirm("确定要新建吗？")){
           return;
       }
-      axios({ // 请求
-          method: 'POST',
-          url:'/albumapi-album-add',
-          data: {
-            access_token: this.access_token,
-          }
-        })
+      API.album.add()
         .then(res => {
           console.log(res.data)
           if (res.data.code != 200){  //不是200 处理失败
@@ -110,14 +98,7 @@ export default {
           return;
       }
       //console.log("删除：", albumId);
-      axios({ // 请求
-          method: 'POST',
-          url:'/albumapi-album-del',
-          data: {
-            access_token: this.access_token,
-            album_id: albumId,
-          }
-        })
+      API.album.del(albumId)
         .then(res => {
           console.log(res.data)
           if (res.data.code != 200){  //不是200 处理失败
@@ -174,7 +155,7 @@ export default {
       localStorage.removeItem("userid");
       localStorage.removeItem("username");
       localStorage.removeItem("isadmin");
-       this.$router.push({ name:"login" });
+      this.$router.push({ name:"login" });
     }
   },
 }

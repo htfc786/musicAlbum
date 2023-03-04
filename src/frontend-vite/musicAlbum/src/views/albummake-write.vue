@@ -33,7 +33,7 @@
 import posupImg from '@/assets/images/make-write-posup.png';
 import posdownImg from '@/assets/images/make-write-posdown.png';
 
-import axios from 'axios';
+import API from '@/network/API';
 import debounce from '@/tools/debounce';
 export default {
   data() {  //数据
@@ -70,14 +70,7 @@ export default {
   methods: {
     getImage: function() {
       const that = this;
-      axios({
-          url: '/albumapi-show-photo-get',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            albumId: this.albumId,
-          },
-        })
+      API.show.getphoto(this.albumId)
         .then(function (e) {
           that.photos = e.data.data;
         })
@@ -88,15 +81,7 @@ export default {
       }
       // 移动请求
       const that = this;
-      axios({
-          url: '/albumapi-make-photo-move',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            photoId: photoId,
-            photoAction: photoAction,
-          },
-        })
+      API.make.photo.move(photoId, photoAction)
         .then(function (e) {
           that.getImage();
         })
@@ -105,15 +90,7 @@ export default {
       var changePhotoText = this.photos[photoOrder - 1].photoText;
       // 请求
       const that = this;
-      axios({
-          url: '/albumapi-make-write-change',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            photoId: photoId,
-            photoNewText: changePhotoText,
-          },
-        })
+      API.make.write.change(photoId, changePhotoText)
         .then(function (e) {
           that.loading.isShow = true;
           setTimeout(function () {
@@ -124,14 +101,7 @@ export default {
     getName: function () {
       // 请求
       const that = this;
-      axios({
-          url: '/albumapi-show-albumdata',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            albumId: this.albumId,
-          },
-        })
+      API.show.albumdata(this.albumId)
         .then(function (e) {
           that.albumName = e.data.data.albumName;
         })
@@ -140,15 +110,7 @@ export default {
       var changeName = this.albumName;
       // 请求
       const that = this;
-      axios({
-          url: '/albumapi-make-album-namechange',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            albumId: this.albumId,
-            newName: changeName,
-          },
-        })
+      API.make.write.changename(this.albumId, changeName)
         .then(function (e) {
           that.loading.isShow = true;
           setTimeout(function () {

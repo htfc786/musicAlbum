@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import API from '@/network/API';
 export default {
   data() {  //数据
     return {
@@ -42,28 +42,14 @@ export default {
   methods: {
     getTemplate: function() {
       const that = this;
-      axios({
-          url: '/albumapi-make-template-getlist',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-          },
-        })
+      API.make.template.getlist()
         .then(function (e) {
           that.templates = e.data.data;
         })
     },
     changeTemplate: function(templateId) {
       const that = this;
-      axios({
-          url: '/albumapi-make-template-change',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            albumId: this.albumId,
-            templateId: templateId
-          },
-        })
+      API.make.template.change(this.albumId, templateId)
         .then(function (e) {
           if (e.data.code != 200){
             alert("发生错误："+e.data.error)

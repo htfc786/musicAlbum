@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import API from '@/network/API';
 export default {
   data() {
     return {
@@ -36,14 +36,7 @@ export default {
   methods:{ // 方法
     login: function () {
       let that = this
-      axios({ // 请求登录
-          method: 'POST',
-          url:'/albumapi-user-login',
-          data: {
-            username: this.username,
-            password: this.password,
-          }
-        })
+      API.user.login(this.username, this.password)
         .then(res => {
           console.log(res.data)
           if (res.data.code != 200){  //不是200 处理失败

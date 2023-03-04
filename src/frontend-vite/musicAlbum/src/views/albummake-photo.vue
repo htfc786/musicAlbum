@@ -45,7 +45,7 @@ import turnImg from '@/assets/images/make-image-turn.png';
 import moveImg from '@/assets/images/make-image-next.png';
 import loadingImg from '@/assets/images/make-image-loading.png';
 
-import axios from 'axios';
+import API from '@/network/API';
 export default {
   data() {  //数据
     return {
@@ -82,14 +82,7 @@ export default {
   methods: {
     getImage: function() {
       const that = this;
-      axios({
-          url: '/albumapi-show-photo-get',
-          method: 'post',
-          data: {
-            access_token: this.access_token,
-            albumId: this.albumId,
-          },
-        })
+      API.show.getphoto(this.albumId)
         .then(function (e) {
           that.photos = e.data.data;
         })
@@ -101,14 +94,7 @@ export default {
       }
       //删除请求
       const that = this;
-      axios({
-        url: '/albumapi-make-photo-del',
-        method: 'post',
-        data: {
-          access_token: this.access_token,
-          photoId: photoId,
-        },
-      })
+      API.make.photo.del(photoId)
       .then(function (e) {
         if (e.data.code == 200){
           alert(e.data.msg);
@@ -145,18 +131,10 @@ export default {
         }
 
         const that = this;
-        axios({
-            url: '/albumapi-make-photo-add',
-            method: 'post',
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            },
-            data: fd,
-            onUploadProgress: function (e) {
-              let filePercent = Math.round(e.loaded / e.total * 100);
-              that.loading.showText = "上传进度：" + filePercent + "%";
-            },
-          })
+        API.make.photo.add(fd, function (e) {
+          let filePercent = Math.round(e.loaded / e.total * 100);
+          that.loading.showText = "上传进度：" + filePercent + "%";
+        })
           .then(function(e){
             // 加载
             that.loading.isShow = false;
@@ -182,18 +160,10 @@ export default {
       }
       // 移动请求
       const that = this;
-      axios({
-        url: '/albumapi-make-photo-move',
-        method: 'post',
-        data: {
-          access_token: this.access_token,
-          photoId: photoId,
-          photoAction: photoAction,
-        },
-      })
-      .then(function (e) {
-        that.getImage();
-      })
+      API.make.photo.del(photoId, photoAction)
+        .then(function (e) {
+          that.getImage();
+        })
     },
   },
 }

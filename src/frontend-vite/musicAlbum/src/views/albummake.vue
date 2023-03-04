@@ -20,7 +20,8 @@
 //引入图片
 import soundImage from '@/assets/images/music_note_big.png'
 
-import axios from 'axios';
+import API from '@/network/API';
+import CONF from '@/config'
 export default {
   data() {
     return {
@@ -39,7 +40,7 @@ export default {
   },
   mounted: function () {  // 打开页面时执行
     if (localStorage.getItem("access_token") == null) {
-      location.href = "./login.html";
+      this.$router.push({ name:"login" });
       return;
     }
     this.username = localStorage.getItem("username");
@@ -59,26 +60,20 @@ export default {
     },
     getAlbumInfo: function(){
       const that = this;
-      axios({
-          url: '/albumapi-show-albumdata',
-          method: 'post',
-          data: {
-            albumId: this.albumId,
-          },
-        })
+      API.show.albumdata(this.albumId)
         .then(function (e) {
           if (e.data.code==200){
             document.title = e.data.data.albumName + " - 编辑相册";
             that.albumName = e.data.data.albumName;
             that.musicUrl = e.data.data.musicUrl;
             //拼接请求链接
-            var photoRequestHost = axios.defaults.baseURL+"/albumapi-show-photo-get";
+            var photoRequestHost = CONF.API_BASE_URL+"/albumapi-show-photo-get";
             that.templateIndex = e.data.data.templateIndex + "?requestHost=" + photoRequestHost + "&albumName=" + that.albumName + "&albumId=" + that.albumId;
 
             return;
           }
           alert("没有此相册！");
-          location.href='./index.html';
+          this.$router.push({ name:"index" });
         })
     },
     switchsound: function(){
